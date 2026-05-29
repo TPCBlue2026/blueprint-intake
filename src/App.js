@@ -6,7 +6,7 @@ const FORMSPREE='https://formspree.io/f/xgoqqepp';
 const BP_META = {
   quote:        { name:'Quote Blueprint',        color:'#5B6D4A', cta:'Get a Free Quote',     industry:'local service businesses' },
   consultation: { name:'Consultation Blueprint', color:'#AD6340', cta:'Book a Call',           industry:'coaches, consultants, therapists, advisors' },
-  booking:      { name:'Booking Blueprint',      color:'#708da9', cta:'Book an Appointment',  industry:'salons, spas, appointment-based businesses' },
+  booking:      { name:'Booking Blueprint',      color:'#1A3A52', cta:'Book an Appointment',  industry:'salons, spas, appointment-based businesses' },
   inquiry:      { name:'Inquiry Blueprint',      color:'#7D5E50', cta:'Start Your Inquiry',   industry:'photographers, event vendors, creative businesses' },
   shop:         { name:'Shop Blueprint',         color:'#C98D26', cta:'Shop Now',             industry:'makers, artisans, product-based businesses' },
 };
@@ -61,23 +61,22 @@ function wc(t){return t?t.trim().split(/\s+/).filter(Boolean).length:0;}
 function wcRange(g){const m=(g||'').match(/\d+/g);return m&&m.length>=2?[+m[0],+m[m.length-1]]:null;}
 
 const st={
-  input:{width:'100%',background:'#fff',border:`1px solid ${BO}`,borderRadius:2,padding:'8px 11px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,color:D,outline:'none',boxSizing:'border-box'},
-  xbtn:{background:'none',border:`1px solid ${BO}`,borderRadius:2,width:32,height:34,cursor:'pointer',color:MU,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13},
-  addbtn:{background:'none',border:`1px dashed ${BO}`,borderRadius:2,padding:'6px 12px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:MU,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
-  card:{background:'#fff',border:`1px solid ${BO}`,borderRadius:2,padding:13,marginBottom:9},
-  cardHd:{fontFamily:'DM Mono, monospace',fontSize:9.5,letterSpacing:'0.08em',textTransform:'uppercase',color:MU,marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
-  cardLabel:{fontSize:12,fontWeight:500,color:TX,marginBottom:3,display:'flex',justifyContent:'space-between'},
-  hint:{fontFamily:'DM Mono, monospace',fontSize:10,color:MU},
-  wc:{fontFamily:'DM Mono, monospace',fontSize:10,color:MU,marginTop:3,display:'block'},
+  input:{width:'100%',background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 11px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,color:'#27231E',outline:'none',boxSizing:'border-box'},
+  xbtn:{background:'none',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,width:32,height:34,cursor:'pointer',color:'#8B7B6F',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13},
+  addbtn:{background:'none',border:'1px dashed rgba(107,63,42,0.15)',borderRadius:2,padding:'6px 12px',fontFamily:"DM Mono, monospace",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#8B7B6F',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
+  card:{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:13,marginBottom:9},
+  cardHd:{fontFamily:"DM Mono, monospace",fontSize:9.5,letterSpacing:'0.08em',textTransform:'uppercase',color:'#8B7B6F',marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
+  cardLabel:{fontSize:12,fontWeight:500,color:'#4D433B',marginBottom:3,display:'flex',justifyContent:'space-between'},
+  hint:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#8B7B6F'},
+  wc:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#8B7B6F',marginTop:3,display:'block'},
 };
 
 const FONTS=`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,350&family=Instrument+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap');`;
 const INTAKE_CSS=`
-  *{box-sizing:border-box;margin:0;padding:0;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Instrument Sans',sans-serif;}
   input,textarea,select{font-family:'Instrument Sans',sans-serif;}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--bp-color)!important;}
-  ::-webkit-scrollbar{width:3px;}
-  ::-webkit-scrollbar-thumb{background:rgba(107,63,42,0.2);border-radius:2px;}
+  ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(107,63,42,0.2);border-radius:2px;}
   .sb-s{padding:4px 12px 4px 20px;font-size:11.5px;color:rgba(255,255,255,0.38);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.15s;font-family:'Instrument Sans',sans-serif;}
   .sb-s:hover{color:rgba(255,255,255,0.7);}
   .sb-s.on{color:#fff;border-left-color:var(--bp-color);background:rgba(255,255,255,0.08);}
@@ -1043,8 +1042,8 @@ function LinkGenerator({onBack}){
         <div>
           <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
-          <option value="emerge">Emerge — {bp === 'shop' ? '$249' : '$149'}/mo</option>
-          <option value="elevate">Elevate — {bp === 'shop' ? '$449' : '$349'}/mo</option>
+            <option value="emerge">Emerge — $149/mo</option>
+            <option value="elevate">Elevate — $349/mo</option>
           </select>
         </div>
       </div>
