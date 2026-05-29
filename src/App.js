@@ -1172,8 +1172,8 @@ function LinkGenerator({onBack}){
         <div>
           <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
-            <option value="emerge">Emerge — $149/mo</option>
-            <option value="elevate">Elevate — $349/mo</option>
+            <option value="emerge">Emerge — {bp === 'shop' ? '$249' : '$149'}/mo</option>
+            <option value="elevate">Elevate — {bp === 'shop' ? '$449' : '$349'}/mo</option>
           </select>
         </div>
       </div>
