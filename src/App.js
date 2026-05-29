@@ -892,23 +892,23 @@ const INQUIRY_ELEVATE=[
 const SHOP_EMERGE=[
   {num:'01',id:'home',name:'Home',sections:[
     {id:'hero',name:'Hero',sub:'Brand story + featured products',
-      why:'The homepage hero leads with brand vibe and shows products immediately. The visitor needs to feel the brand and see what you sell in one scroll.',
-      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} based in ${p.area||'[area]'}${p.since?' founded in '+p.since:''}. I sell ${p.ideal||'[describe products]'}. Write 5 homepage headlines under 14 words that lead with brand story and immediately make someone want to browse. Tone: ${p.tone||'warm, distinctive, inviting'}.`,
+      why:'The homepage hero leads with brand vibe and shows products immediately. Visitor needs to feel the brand and see what you sell in one scroll.',
+      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} based in ${p.area||'[area]'}${p.since?' founded in '+p.since:''}. I sell ${p.ideal||'[describe products]'}. Write 5 homepage headlines under 14 words that lead with brand story and make someone want to browse. Tone: ${p.tone||'warm, distinctive, inviting'}.`,
       fields:[
         {id:'headline',label:'Headline',type:'text',guidance:'6–14 words',ph:'e.g. Small-batch skincare made with ingredients you can actually pronounce'},
         {id:'sub',label:'Subheadline',type:'textarea',guidance:'20–40 words',ph:'Brand story in two sentences — who makes it, why, and what makes it different.'},
         {id:'cta',label:'Primary CTA button text',type:'text',guidance:'3–5 words',ph:'e.g. Shop Now · Browse the Collection'},
       ]},
-    {id:'featprods',name:'Featured products',sub:'4–6 hero products',
+    {id:'featprods',name:'Featured products',sub:'4–6 hero products on homepage',
       why:'Showcasing your best-selling or signature products immediately drives the highest conversion.',
       fields:[{id:'prods',label:'Products to feature on homepage',type:'cards',guidance:'4–6 products · your bestsellers or signature items',min:4,max:6,lbl:'Product',subs:[{id:'name',label:'Product name',ph:'e.g. Lavender Honey Face Serum',guidance:''},{id:'tagline',label:'One-line description',ph:'e.g. Deeply hydrating · for dry and sensitive skin',guidance:'10–20 words'},{id:'price',label:'Price',ph:'e.g. $38',guidance:''}]}]},
     {id:'brandstory',name:'Brand story teaser',sub:'Brief origin + CTA to About',
       why:'2–3 sentences that build trust and connection before the visitor reaches the About page.',
-      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} in ${p.area||'[area]'}. Brand story: [how it started, what problem it solves, who makes it, what makes it different]. Write a 60–80 word homepage brand story teaser. Warm, specific — buying from a real person with a real reason. Tone: ${p.tone||'warm, authentic'}.`,
+      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} in ${p.area||'[area]'}. Brand story: [how it started, what problem it solves, who makes it, what makes it different]. Write a 60–80 word homepage brand story teaser. Warm, specific. Tone: ${p.tone||'warm, authentic'}.`,
       fields:[{id:'story',label:'Brand story teaser',type:'textarea',guidance:'50–80 words',ph:'How did the brand start? What problem does it solve? Who makes it? What makes it different?'}]},
     {id:'proof',name:'Testimonials and reviews',sub:'2–3 product reviews',
       why:'Product reviews are among the most powerful conversion tools in e-commerce.',
-      fields:[{id:'revlist',label:'Product reviews',type:'cards',guidance:'2–3 reviews · 30–80 words each · mention specific products if possible',min:2,max:3,lbl:'Review',subs:[{id:'text',label:'Review text',ph:'Best if it mentions a specific product and result.',guidance:'30–80 words',multi:true},{id:'name',label:'Customer name',ph:'e.g. Danielle M.',guidance:''},{id:'product',label:'Product purchased',ph:'e.g. Lavender Honey Face Serum',guidance:''}]}]},
+      fields:[{id:'revlist',label:'Product reviews',type:'cards',guidance:'2–3 reviews · 30–80 words · mention specific products if possible',min:2,max:3,lbl:'Review',subs:[{id:'text',label:'Review text',ph:'Best if it mentions a specific product and result.',guidance:'30–80 words',multi:true},{id:'name',label:'Customer name',ph:'e.g. Danielle M.',guidance:''},{id:'product',label:'Product purchased',ph:'e.g. Lavender Honey Face Serum',guidance:''}]}]},
     {id:'homecta',name:'Shop CTA',sub:'Drive to the full catalog',
       why:'End with a clear invitation to browse the full collection.',
       fields:[
@@ -916,21 +916,131 @@ const SHOP_EMERGE=[
         {id:'btn',label:'Button text',type:'text',guidance:'3–5 words',ph:'Shop All Products'},
       ]},
   ]},
-  {num:'02',id:'shop',name:'Shop',sections:[
+  {num:'02',id:'storesetup',name:'Store Setup',sections:[
+    {id:'basics',name:'Store basics',sub:'The essentials for your Squarespace store configuration',
+      why:'These details configure how your store operates — currency, timezone, checkout, and tax are all set during the build.',
+      fields:[
+        {id:'tagline',label:'Store tagline or short description',type:'textarea',guidance:'1–2 sentences — used in browser tabs and search previews',ph:'e.g. Small-batch soy candles, poured by hand in Nashville.'},
+        {id:'email',label:'Customer-facing contact email',type:'text',guidance:'Visible to customers',ph:'e.g. hello@yourshop.com'},
+        {id:'support_email',label:'Customer support email (if different)',type:'text',guidance:'Optional',ph:'e.g. support@yourshop.com'},
+        {id:'currency',label:'Currency',type:'text',guidance:'',ph:'e.g. USD'},
+        {id:'timezone',label:'Store timezone',type:'text',guidance:'',ph:'e.g. Central Time (CT)'},
+        {id:'checkout',label:'Checkout type',type:'sel',options:['Guest checkout (recommended — reduces friction)','Account required','Both options available']},
+      ]},
+    {id:'tax',name:'Sales tax',sub:'',
+      why:'Squarespace can calculate tax automatically by state. You need to tell Victoria which states you have sales tax nexus in.',
+      fields:[
+        {id:'collect_tax',label:'Will you collect sales tax?',type:'sel',options:['Yes','No','Not sure — I need guidance']},
+        {id:'tax_states',label:'If yes — which states or regions?',type:'textarea',guidance:'List all states where you have sales tax nexus',ph:'e.g. Tennessee, California, New York'},
+      ]},
+    {id:'social_setup',name:'Social media accounts',sub:'For store footer and connection',
+      why:'List only platforms you actively post to — dormant accounts signal inattention.',
+      fields:[{id:'socials',label:'Social profiles',type:'cards',guidance:'Active platforms only',min:1,max:6,lbl:'Platform',subs:[{id:'platform',label:'Platform',ph:'e.g. Instagram',guidance:''},{id:'handle',label:'Handle or URL',ph:'e.g. @yourshop or https://instagram.com/...',guidance:''}]}]},
+  ]},
+  {num:'03',id:'shop',name:'Shop',sections:[
     {id:'shophero',name:'Shop page header',sub:'Minimal — let products lead',
       why:'Visitors are here to browse. Keep the header brief.',
       fields:[
         {id:'headline',label:'Page headline',type:'text',guidance:'2–5 words',ph:'e.g. The Shop · Browse All · Our Products'},
         {id:'sub',label:'One-line intro (optional)',type:'text',guidance:'10–20 words',ph:'e.g. Handmade in small batches · ships within 3–5 business days.'},
       ]},
-    {id:'productlist',name:'Product catalog',sub:'Up to 20 products (Emerge)',
-      why:'Victoria will set up each product in the shop based on what you provide here.',
-      fields:[{id:'prods',label:'Products',type:'cards',guidance:'Up to 20 products for Emerge',min:1,max:20,lbl:'Product',subs:[{id:'name',label:'Product name',ph:'e.g. Lavender Honey Face Serum',guidance:''},{id:'desc',label:'Product description',ph:'What it is, what it does, who it is for, and what makes it worth buying.',guidance:'40–100 words',multi:true},{id:'price',label:'Price',ph:'e.g. $38',guidance:''},{id:'variants',label:'Variants (size, scent, color, etc.)',ph:'e.g. 1oz / 2oz or Unscented / Lavender',guidance:'Leave blank if none'},{id:'materials',label:'Key ingredients or materials',ph:'e.g. Organic shea butter, vitamin E, lavender essential oil',guidance:''}]}]},
+    {id:'collections',name:'Collections',sub:'Define your collections first — products will reference these',
+      why:'Collections organize your products into browsable categories. Emerge supports up to 3 collections, Elevate up to 6. Define them here before adding products.',
+      fields:[{id:'cols',label:'Collections (categories)',type:'rep',guidance:'Up to 3 for Emerge · give each a clear, short name',ph:'e.g. Candles · Skincare · Gift Sets',min:1,max:3}]},
+    {id:'productlist',name:'Product catalog',sub:'One entry per product — reference your collection names above',
+      why:'Victoria will set up each product in Squarespace based on what you provide here. Be as complete as possible — weight and dimensions are needed for shipping calculation.',
+      fields:[{id:'prods',label:'Products',type:'cards',guidance:'Up to 20 products for Emerge',min:1,max:20,lbl:'Product',subs:[
+        {id:'name',label:'Product name',ph:'e.g. Cedar + Vanilla Soy Candle',guidance:''},
+        {id:'collection',label:'Collection / category',ph:'Enter the collection name exactly as listed above',guidance:''},
+        {id:'short_desc',label:'Short description',ph:'15–30 words — for the product card on the shop page.',guidance:'15–30 words',multi:true},
+        {id:'full_desc',label:'Full description',ph:'60–100 words — for the product detail page. What it is, what it does, who it\'s for, what makes it worth buying.',guidance:'60–100 words',multi:true},
+        {id:'price',label:'Price',ph:'e.g. $28.00',guidance:''},
+        {id:'sku',label:'SKU (optional)',ph:'e.g. CAN-001',guidance:''},
+        {id:'type',label:'Physical or digital?',ph:'Physical / Digital',guidance:''},
+        {id:'fulfillment',label:'In stock or made to order?',ph:'In Stock / Made to Order',guidance:''},
+        {id:'qty',label:'Stock quantity',ph:'e.g. 12 (leave blank if made to order)',guidance:''},
+        {id:'weight',label:'Weight',ph:'e.g. 1.2 lbs — required for shipping calculation',guidance:''},
+        {id:'dims',label:'Dimensions (L × W × H)',ph:'e.g. 4 × 4 × 5 inches — required for shipping calculation',guidance:''},
+        {id:'variations',label:'Variations (size, scent, color, etc.)',ph:'e.g. Scent: Cedar / Lavender / Vanilla',guidance:'Leave blank if no variations'},
+        {id:'var_prices',label:'Price per variation (if prices differ)',ph:'e.g. S: $24, M: $28, L: $32',guidance:''},
+        {id:'var_stock',label:'Stock per variation',ph:'e.g. Cedar: 8, Lavender: 5',guidance:''},
+        {id:'related',label:'Related products (2–3 names)',ph:'e.g. Lavender Face Serum, Rose Hip Oil',guidance:''},
+        {id:'care',label:'Care instructions',ph:'e.g. Trim wick to 1/4 inch before each burn',guidance:''},
+        {id:'materials',label:'Materials / ingredients',ph:'e.g. 100% soy wax, cotton wick, fragrance oil',guidance:''},
+        {id:'notes',label:'Notes for Victoria',ph:'Anything special about this product\'s setup.',guidance:''},
+      ]}]},
+    {id:'images_note',name:'Product images',sub:'Upload to your project folder',
+      why:'Minimum 1 clean product shot per item on a neutral background. Recommended: 3–5 images per product. Format: JPG or PNG, minimum 1000px on shortest side. Organize in subfolders named by product.',
+      fields:[
+        {id:'pnote',label:'Product photos',type:'upnote',guidance:'Organize in subfolders named by product · file names should match product name or SKU'},
+        {id:'img_notes',label:'Image notes for Victoria',type:'textarea',guidance:'Optional',ph:'Describe your folder structure, any hero shots to highlight, or variation images.'},
+      ]},
   ]},
-  {num:'03',id:'about',name:'About',sections:[
+  {num:'04',id:'shipping',name:'Shipping',sections:[
+    {id:'shippingmethod',name:'Shipping method',sub:'',
+      why:'This determines how shipping costs are calculated at checkout. Choose the method that best fits your product weights and price points.',
+      fields:[
+        {id:'method',label:'Shipping method',type:'sel',options:['Flat rate (same price for all orders)','Free shipping on all orders','Free over a threshold (e.g. free over $50)','Carrier-calculated (real-time rates from USPS, UPS, etc.)']},
+        {id:'flat_domestic',label:'Domestic flat rate (if flat rate)',type:'text',guidance:'',ph:'e.g. $6.00'},
+        {id:'flat_intl',label:'International flat rate (if flat rate)',type:'text',guidance:'',ph:'e.g. $18.00 or N/A'},
+        {id:'free_threshold',label:'Free shipping threshold (if applicable)',type:'text',guidance:'',ph:'e.g. Free shipping on orders over $75'},
+      ]},
+    {id:'carriers',name:'Carriers and international',sub:'',
+      why:'Victoria needs to know which carriers you use and whether you ship internationally to configure shipping zones correctly.',
+      fields:[
+        {id:'carrier',label:'Carriers you use',type:'checks',options:['USPS','UPS','FedEx','Other']},
+        {id:'carrier_other',label:'Other carrier name',type:'text',guidance:'Only if Other selected above',ph:''},
+        {id:'international',label:'Do you ship internationally?',type:'sel',options:['Yes — worldwide','Yes — select countries only','No — domestic only']},
+        {id:'intl_countries',label:'If select countries — which ones?',type:'textarea',guidance:'',ph:'e.g. Canada, United Kingdom, Australia'},
+      ]},
+    {id:'processing',name:'Processing and delivery',sub:'',
+      why:'Sets customer expectations before they buy — one of the biggest sources of post-purchase frustration if not clearly communicated.',
+      fields:[
+        {id:'proc_time',label:'Processing / handling time',type:'text',guidance:'How long from order placed to order shipped',ph:'e.g. Ships within 3–5 business days'},
+        {id:'expedited',label:'Do you offer expedited or express shipping?',type:'sel',options:['Yes','No']},
+        {id:'expedited_detail',label:'If yes — describe options and pricing',type:'textarea',guidance:'',ph:'e.g. Priority Mail (2–3 days): $14.00 / Express (1–2 days): $28.00'},
+        {id:'local_pickup',label:'Do you offer local pickup?',type:'sel',options:['Yes','No']},
+        {id:'pickup_detail',label:'If yes — pickup address or instructions',type:'textarea',guidance:'',ph:''},
+        {id:'local_delivery',label:'Do you offer local delivery?',type:'sel',options:['Yes','No']},
+      ]},
+    {id:'packaging',name:'Packaging',sub:'',
+      why:'Lets Victoria communicate your packaging experience to customers on the site and in order confirmation emails.',
+      fields:[
+        {id:'pkg_type',label:'Packaging type',type:'sel',options:['Standard / plain packaging','Branded packaging','Eco-friendly / sustainable packaging']},
+        {id:'pkg_notes',label:'Packaging notes for customers',type:'textarea',guidance:'Optional',ph:'e.g. All orders are wrapped in tissue paper and shipped in a branded kraft box.'},
+      ]},
+  ]},
+  {num:'05',id:'policies',name:'Store Policies',sections:[
+    {id:'returns',name:'Return policy',sub:'',
+      why:'A clear return policy removes one of the biggest hesitations a new customer has before buying. Answer the questions first, then use the AI prompt to draft your policy.',
+      prompt:(p)=>`Write a return policy for my online shop, ${p.biz||'[business name]'}. Here are my details: I [do / do not] accept returns. If yes, customers have [X] days from delivery. Items must be [unopened and unused / in original condition / etc.]. The following are NOT returnable: [list]. To request a return, customers should [contact email / fill out a form / etc.]. Refunds are issued as [original payment / store credit]. Write this as 80–120 words of plain-language policy.`,
+      fields:[
+        {id:'accept_returns',label:'Do you accept returns?',type:'sel',options:['Yes','No — all sales final','It depends — I\'ll explain in notes']},
+        {id:'return_window',label:'If yes — how many days from delivery?',type:'text',guidance:'',ph:'e.g. 14 days'},
+        {id:'return_condition',label:'Condition required for return',type:'text',guidance:'',ph:'e.g. Unopened and unused, in original packaging'},
+        {id:'non_returnable',label:'Items that are NOT returnable',type:'textarea',guidance:'',ph:'e.g. Personal care items, digital products, sale items, custom orders'},
+        {id:'refund_type',label:'Refunds issued as',type:'sel',options:['Original payment method','Store credit','Exchange only','Assessed case by case']},
+        {id:'return_policy_draft',label:'Your return policy (draft or final)',type:'textarea',guidance:'Use the AI prompt above to generate a draft, then edit to sound like you',ph:''},
+      ]},
+    {id:'fulfillment',name:'Fulfillment policy',sub:'',
+      why:'Especially important if your products are made to order. Sets expectations before checkout so customers aren\'t surprised after they\'ve paid.',
+      prompt:(p)=>`Write a fulfillment policy for my online shop, ${p.biz||'[business name]'}. I fulfill orders by [shipping from stock / making to order / both]. If made to order, production takes [X] business days before shipping. Order confirmations are sent automatically. Shipping confirmations with tracking are sent automatically. Order cancellations are [accepted any time before shipping / accepted within X hours / not accepted for made-to-order items]. Write this as 60–90 words of plain-language policy.`,
+      fields:[
+        {id:'fulfill_method',label:'How do you fulfill orders?',type:'sel',options:['Ship from existing stock — orders go out as received','Made to order — each item is made after purchase','Mix of both — some in stock, some made to order','Digital delivery — sent automatically after purchase']},
+        {id:'made_to_order_time',label:'If made to order — production time before shipping',type:'text',guidance:'',ph:'e.g. 5–7 business days'},
+        {id:'cancellations',label:'Order cancellations',type:'sel',options:['Accepted any time before shipping','Accepted within a limited window (specify below)','Not accepted for made-to-order items','Assessed case by case']},
+        {id:'cancel_window',label:'Cancellation window (if limited)',type:'text',guidance:'',ph:'e.g. Within 24 hours of placing the order'},
+        {id:'digital_delivery',label:'For digital products — how are they delivered?',type:'sel',options:['Automatic download link sent via email after purchase','Link provided on confirmation page','Delivered manually by me','N/A — I don\'t sell digital products']},
+        {id:'fulfill_policy_draft',label:'Your fulfillment policy (draft or final)',type:'textarea',guidance:'Use the AI prompt above to generate a draft',ph:''},
+      ]},
+    {id:'privacy',name:'Privacy policy',sub:'',
+      why:'Any store that collects customer information is legally required to have a privacy policy in most jurisdictions. This is not optional.',
+      fields:[{id:'privacy_choice',label:'How would you like to handle your privacy policy?',type:'sel',options:['Add Termageddon to my build — handle setup for me ($49 setup + $129/year)','I already have a privacy policy — I\'ll provide the text','I\'ll write my own','Not sure — let\'s talk about it on a call']}]},
+  ]},
+  {num:'06',id:'about',name:'About',sections:[
     {id:'abouthero',name:'Hero',sub:'Brand founder story',
       why:'The About page builds the trust that converts browsers into buyers — especially for premium or handmade products.',
-      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} in ${p.area||'[area]'}. Write 5 About page headlines that lead with the brand founder story and what makes this brand worth choosing. Warm, specific, human. Under 14 words each.`,
+      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'} in ${p.area||'[area]'}. Write 5 About page headlines that lead with the brand founder story. Warm, specific, human. Under 14 words each.`,
       fields:[{id:'headline',label:'Opening headline',type:'text',guidance:'6–14 words',ph:'e.g. Made by hand, with ingredients I\'d give my own family'}]},
     {id:'brandstory',name:'Full brand story',sub:'Origin, mission, values',
       why:'Product buyers want to know who made this, why, and what they stand for.',
@@ -938,39 +1048,43 @@ const SHOP_EMERGE=[
       fields:[{id:'story',label:'Full brand story',type:'textarea',guidance:'180–260 words',ph:'How did this brand start? What problem were you solving? Who is behind it? What do you believe about the products you make and the people who use them?'}]},
     {id:'whymakes',name:'What makes your products different',sub:'Your differentiator',
       why:'Often in the ingredients, process, sourcing, or values.',
-      prompt:(p)=>`I run ${p.biz||'[business name]'}, a ${p.type||'[type]'}. What sets my products apart: ${p.differentiator||'[differentiator]'}. Write a 60–80 word "What makes us different" section. Specific and verifiable.`,
-      fields:[{id:'diff',label:'What makes your products different',type:'textarea',guidance:'50–80 words',ph:'Ingredients, sourcing, process, values, what you never put in — whatever genuinely differentiates what you make from what anyone else offers.'}]},
+      fields:[{id:'diff',label:'What makes your products different',type:'textarea',guidance:'50–80 words',ph:'Ingredients, sourcing, process, values, what you never include — whatever genuinely differentiates what you make from what anyone else offers.'}]},
     {id:'aboutcta',name:'Closing CTA',sub:'',
-      why:'End with a clear invitation to shop.',
       fields:[
         {id:'headline',label:'CTA headline',type:'text',guidance:'6–12 words',ph:'e.g. Ready to try it for yourself? Browse the collection.'},
         {id:'btn',label:'Button text',type:'text',guidance:'3–5 words',ph:'Shop Now'},
       ]},
   ]},
-  {num:'04',id:'shipping',name:'Shipping and Policies',sections:[
-    {id:'shippinginfo',name:'Shipping',sub:'Rates, timelines, expectations',
-      why:'Clear shipping information reduces abandoned carts and post-purchase frustration.',
+  {num:'07',id:'extras',name:'Extras and Add-ons',sections:[
+    {id:'gifting',name:'Gift options',sub:'',
+      why:'Gift messaging and wrapping can meaningfully increase average order value — especially for shops that sell giftable products.',
       fields:[
-        {id:'processing',label:'Processing time',type:'text',guidance:'',ph:'e.g. Orders ship within 3–5 business days'},
-        {id:'domestic',label:'Domestic shipping',type:'textarea',guidance:'',ph:'e.g. Standard: $6 (5–7 days) · Expedited: $14 (2–3 days) · Free on orders over $50'},
-        {id:'international',label:'International shipping (if applicable)',type:'textarea',guidance:'Leave blank if you do not ship internationally',ph:'e.g. International shipping available. Rates calculated at checkout.'},
+        {id:'gift_msg',label:'Do you want to offer gift messaging?',type:'sel',options:['Yes — customers can add a gift message at checkout','No']},
+        {id:'gift_wrap',label:'Do you want to offer gift wrapping?',type:'sel',options:['Yes — as a free option','Yes — as a paid add-on','No']},
+        {id:'gift_wrap_price',label:'If paid — gift wrapping price',type:'text',guidance:'',ph:'e.g. $4.00'},
       ]},
-    {id:'returns',name:'Returns and exchanges',sub:'Your policy',
-      why:'A clear, fair return policy removes one of the most common purchase barriers.',
-      fields:[{id:'returnpolicy',label:'Returns and exchange policy',type:'textarea',guidance:'What is returnable, in what timeframe, and what is the process',ph:'e.g. We accept returns on unopened, unused items within 14 days of delivery. Personal care items and digital products are final sale.'}]},
-    {id:'faq',name:'FAQ',sub:'Common pre-purchase questions',
-      why:'Product FAQs handle the most common objections before they become reasons not to buy.',
-      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–6 questions',min:3,max:6,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Are your products safe for sensitive skin?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]}]},
+    {id:'discounts',name:'Discount and coupon codes',sub:'',
+      why:'Launch codes and welcome discounts are a great way to drive first purchases. Victoria will set these up in Squarespace during the build.',
+      fields:[{id:'codes',label:'Launch discount codes',type:'cards',guidance:'List any codes you want set up at launch',min:1,max:6,lbl:'Code',subs:[{id:'code',label:'Code',ph:'e.g. WELCOME10',guidance:''},{id:'type',label:'Discount type',ph:'e.g. 10% off all orders',guidance:''},{id:'exp',label:'Expiration (optional)',ph:'e.g. Expires Dec 31, 2025',guidance:''}]}]},
+    {id:'email_mktg',name:'Email marketing',sub:'',
+      why:'Collecting emails from day one is one of the highest-value things you can do for a new e-commerce store.',
+      fields:[
+        {id:'email_tool',label:'Email marketing platform (if any)',type:'sel',options:['Squarespace Email Campaigns','Mailchimp','Klaviyo','Flodesk','Other','Not set up yet']},
+        {id:'email_other',label:'If Other — platform name',type:'text',guidance:'',ph:''},
+        {id:'popup',label:'Do you want an email capture popup on the site?',type:'sel',options:['Yes — set up a popup with a discount incentive','Yes — set up a popup without a discount','No popup']},
+        {id:'popup_incentive',label:'Popup incentive (if applicable)',type:'text',guidance:'',ph:'e.g. 10% off your first order'},
+      ]},
+    {id:'abandoned_cart',name:'Abandoned cart email [Elevate only]',sub:'',
+      why:'Abandoned cart emails recover an average of 5–15% of abandoned carts. Elevate includes this setup.',
+      fields:[{id:'cart_email',label:'Do you want an abandoned cart email configured? (Elevate only)',type:'sel',options:['Yes — please set this up','No — skip for now']}]},
   ]},
-  {num:'05',id:'contact',name:'Contact',sections:[
+  {num:'08',id:'contact',name:'Contact',sections:[
     {id:'conthero',name:'Headline and statement',sub:'',
-      why:'Most customer questions are about orders, shipping, or products.',
       fields:[
         {id:'headline',label:'Page headline',type:'text',guidance:'4–8 words',ph:'e.g. Questions? We\'re Happy to Help.'},
         {id:'statement',label:'Brief statement',type:'textarea',guidance:'15–30 words',ph:'e.g. For questions about your order, shipping, or products — reach out and we\'ll reply within 1–2 business days.'},
       ]},
     {id:'social',name:'Social and contact links',sub:'',
-      why:'Instagram and TikTok especially — product businesses often have strong visual communities there.',
       fields:[
         {id:'email',label:'Business email address',type:'text',guidance:'',ph:'e.g. hello@yourbrand.com'},
         {id:'links',label:'Social media links',type:'cards',guidance:'Instagram, Pinterest, TikTok — whatever you are active on',min:1,max:5,lbl:'Platform',subs:[{id:'platform',label:'Platform',ph:'e.g. Instagram',guidance:''},{id:'url',label:'URL',ph:'',guidance:''}]},
@@ -980,37 +1094,53 @@ const SHOP_EMERGE=[
 
 const SHOP_ELEVATE=[
   ...SHOP_EMERGE.map(p=>{
-    if(p.id==='shop')return{...p,sections:[...p.sections,
-      {id:'categories',name:'Product categories [Elevate]',sub:'Multiple categories with filters',tag:'elevate',
-        why:'Elevate supports multiple product categories with filtering.',
-        fields:[{id:'cats',label:'Product categories',type:'rep',guidance:'List each category name',ph:'e.g. Skincare · Haircare · Gift Sets',min:2,max:8}]},
-      {id:'more_prods',name:'Additional products [Elevate]',sub:'Up to 50 products total',tag:'elevate',
-        why:'Elevate supports up to 50 products.',
-        fields:[{id:'prods',label:'Additional products (beyond first 20)',type:'cards',guidance:'Up to 30 more',min:1,max:30,lbl:'Product',subs:[{id:'name',label:'Product name',ph:'',guidance:''},{id:'desc',label:'Product description',ph:'',guidance:'40–100 words',multi:true},{id:'price',label:'Price',ph:'',guidance:''},{id:'category',label:'Category',ph:'Which category does this belong to?',guidance:''}]}]},
-    ]};
+    if(p.id==='shop')return{...p,sections:p.sections.map(s=>{
+      if(s.id==='collections')return{...s,
+        fields:[{id:'cols',label:'Collections (categories)',type:'rep',guidance:'Up to 6 for Elevate',ph:'e.g. Candles · Skincare · Gift Sets',min:1,max:6}]};
+      if(s.id==='productlist')return{...s,
+        fields:[{...s.fields[0],guidance:'Up to 20 products for Emerge — additional products in the Elevate section below'}]};
+      return s;
+    })};
     if(p.id==='about')return{...p,sections:[...p.sections,
       {id:'process',name:'Behind the product [Elevate]',sub:'How it is made',tag:'elevate',
-        why:'Elevate About page goes deeper into process.',
-        fields:[{id:'process',label:'Your process or how products are made',type:'textarea',guidance:'80–150 words',ph:'Where materials come from, how products are made, what quality control looks like. Specific details build trust.'}]},
+        why:'Elevate About page goes deeper into process — the how behind the what.',
+        fields:[{id:'process',label:'Your process or how products are made',type:'textarea',guidance:'80–150 words',ph:'Where materials come from, how products are made, what quality control looks like.'}]},
     ]};
     return p;
   }),
-  {num:'06',id:'blog_look',name:'Blog or Lookbook [Elevate — choose one]',tag:'elevate',sections:[
+  {num:'09',id:'more_prods',name:'Additional products [Elevate]',tag:'elevate',sections:[
+    {id:'extra_prods',name:'Products 21–50 [Elevate]',sub:'Same fields as your first 20 — up to 30 additional products',
+      why:'Elevate supports up to 50 products total. Add your remaining products here using the same format.',
+      fields:[{id:'prods',label:'Additional products',type:'cards',guidance:'Up to 30 more products',min:1,max:30,lbl:'Product',subs:[
+        {id:'name',label:'Product name',ph:'',guidance:''},
+        {id:'collection',label:'Collection / category',ph:'Enter the collection name exactly as listed',guidance:''},
+        {id:'short_desc',label:'Short description',ph:'',guidance:'15–30 words',multi:true},
+        {id:'full_desc',label:'Full description',ph:'',guidance:'60–100 words',multi:true},
+        {id:'price',label:'Price',ph:'',guidance:''},
+        {id:'type',label:'Physical or digital?',ph:'Physical / Digital',guidance:''},
+        {id:'fulfillment',label:'In stock or made to order?',ph:'In Stock / Made to Order',guidance:''},
+        {id:'qty',label:'Stock quantity',ph:'',guidance:''},
+        {id:'weight',label:'Weight',ph:'e.g. 1.2 lbs',guidance:''},
+        {id:'dims',label:'Dimensions (L × W × H)',ph:'e.g. 4 × 4 × 5 inches',guidance:''},
+        {id:'variations',label:'Variations',ph:'',guidance:''},
+        {id:'materials',label:'Materials / ingredients',ph:'',guidance:''},
+      ]}]},
+  ]},
+  {num:'10',id:'blog_look',name:'Blog or Lookbook [Elevate]',tag:'elevate',sections:[
     {id:'choice',name:'Blog or Lookbook — choose one',sub:'',
       why:'Elevate adds one content page — Blog for SEO and brand storytelling, or Lookbook for visual product showcasing.',
       fields:[
-        {id:'choice',label:'Which would you prefer?',type:'sel',options:['Blog — articles, tips, brand stories (good for SEO)','Lookbook — curated visual spreads showcasing your products in use']},
+        {id:'choice',label:'Which would you prefer?',type:'sel',options:['Blog — articles, tips, brand stories (good for SEO)','Lookbook — curated visual spreads showcasing products in use']},
         {id:'headline',label:'Page headline',type:'text',guidance:'1–3 words',ph:'e.g. The Journal · Lookbook · Stories'},
         {id:'firstcontent',label:'First article or lookbook spread',type:'textarea',guidance:'Blog: 400–600 words · Lookbook: describe the spread and provide images',ph:'Write your first piece of content, or describe what you want to feature.'},
       ]},
   ]},
-  {num:'07',id:'faq_page',name:'FAQ page [Elevate]',tag:'elevate',sections:[
+  {num:'11',id:'faq_page',name:'FAQ page [Elevate]',tag:'elevate',sections:[
     {id:'faqpage',name:'Standalone FAQ page',sub:'Shipping, returns, care, and product questions',
       why:'Dedicated FAQ page reduces customer service volume and removes pre-purchase hesitation.',
       fields:[{id:'faqs',label:'All FAQ items',type:'cards',guidance:'8–15 questions covering shipping, returns, care, ingredients, and ordering',min:8,max:15,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–80 words',multi:true}]}]},
   ]},
 ];
-
 /* ─── Link Generator ─────────────────────────────────────── */
 function LinkGenerator({onBack}){
   const[drive,setDrive]=useState('');
@@ -1042,8 +1172,8 @@ function LinkGenerator({onBack}){
         <div>
           <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
-            <option value="emerge">Emerge — {bp === 'shop' ? '$249' : '$149'}/mo</option>
-            <option value="elevate">Elevate — {bp === 'shop' ? '$449' : '$349'}/mo</option>
+            <option value="emerge">Emerge — $149/mo</option>
+            <option value="elevate">Elevate — $349/mo</option>
           </select>
         </div>
       </div>
