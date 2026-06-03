@@ -63,6 +63,16 @@ function buildPayload(bp,tier,profile,data,pages,design){
   return payload;
 }
 
+
+function useIsMobile(){
+  const[mob,setMob]=useState(()=>typeof window!=='undefined'&&window.innerWidth<700);
+  useEffect(()=>{
+    const h=()=>setMob(window.innerWidth<700);
+    window.addEventListener('resize',h);
+    return()=>window.removeEventListener('resize',h);
+  },[]);
+  return mob;
+}
 function wc(t){return t?t.trim().split(/\s+/).filter(Boolean).length:0;}
 function wcRange(g){const m=(g||'').match(/\d+/g);return m&&m.length>=2?[+m[0],+m[m.length-1]]:null;}
 
@@ -90,6 +100,9 @@ const INTAKE_CSS=`
   .addbtn:hover{border-color:var(--bp-color)!important;color:var(--bp-color)!important;}
   .ai-btn:hover{border-color:#94431C!important;color:#94431C!important;}
   .lp-btn:hover{filter:brightness(1.12);}
+  .tour-next:hover{filter:brightness(1.1);}
+  @keyframes tourPulse{0%{opacity:1;}50%{opacity:0.7;}100%{opacity:1;}}
+  .tour-icon{animation:tourPulse 2s ease infinite;}
 `;
 
 function WC({text,guidance}){
@@ -1214,6 +1227,7 @@ const DESIGN_DATA = {
 
 /* ─── Design Step Component ──────────────────────────────── */
 function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
+  const isMobile=useIsMobile();
   const dd=DESIGN_DATA[bpKey]||DESIGN_DATA.quote;
   const selPal=dd.palettes.find(p=>p.id===design.paletteId)||dd.palettes[0];
   const selFont=dd.fonts.find(f=>f.id===design.fontId)||dd.fonts[0];
@@ -1266,7 +1280,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
   const paletteCards=<div style={{marginBottom:32}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Color palette</div>
     <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>Choose the palette that feels most like your brand — or the direction you want to grow into.</p>
-    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+    <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.palettes.map(pal=>{
         const isSel=design.paletteId===pal.id||((!design.paletteId)&&pal.id==='A');
         return<div key={pal.id} onClick={()=>setPal(pal.id)} style={{
@@ -1291,7 +1305,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
   const fontCards=<div style={{marginBottom:32}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Font pairing</div>
     <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>All three options are curated for {bpMeta.industry}. See how each one feels in the preview above.</p>
-    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+    <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.fonts.map(font=>{
         const isSel=design.fontId===font.id||((!design.fontId)&&font.id==='A');
         return<div key={font.id} onClick={()=>setFont(font.id)} style={{
@@ -1310,7 +1324,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
     </div>
   </div>;
 
-  return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FBF8F1'}}>
+  return<div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 40px':'26px 34px 40px',background:'#FBF8F1'}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
     <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Design preferences</h1>
     <p style={{fontSize:13,color:'#8B7B6F',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
@@ -1322,6 +1336,75 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
       <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
         Start content intake →
       </button>
+    </div>
+  </div>;
+}
+
+
+/* ─── Tour Overlay ───────────────────────────────────────── */
+const TOUR_STOPS = [
+  { icon:'👋', title:'Welcome to your intake!',
+    text:'This walks you through every section of your site one at a time. It takes most people 45–60 minutes. Click Next for a quick orientation, or skip straight to the form.' },
+  { icon:'📊', title:'Track your progress',
+    text:'The bar at the top fills as you complete sections. The counter on the right shows exactly how far along you are. You'll see it update with every section you finish.' },
+  { icon:'🗂️', title:'Navigate by section',
+    text:'Every page and section of your site is listed in the left panel. Completed sections show a colored dot. You can jump to any section at any time — your answers are saved as you go.' },
+  { icon:'💡', title:'Why it matters',
+    text:'Each section opens with a callout explaining how that specific content affects your site's performance. Worth a quick read before you start writing — it gives context for what Victoria is building.' },
+  { icon:'✦', title:'Stuck? Use the AI prompt',
+    text:'Every writing section has an AI prompt pre-loaded with your business info. Tap "AI writing prompt," copy it, paste it into Claude or ChatGPT, and edit the result until it sounds like you.' },
+  { icon:'📝', title:'Word count guide',
+    text:'The word count below each text field turns green when you're in the target range. If it's grey you're under — if it's red you've gone a bit over. These ranges are Victoria's recommendations, not hard limits.' },
+  { icon:'✓', title:'You're all set!',
+    text:'Work through the sections at your own pace. You can stop and come back — just don't close the tab without submitting. When you finish the last section, hit Submit and Victoria takes it from there.' },
+];
+
+function TourOverlay({bpMeta,onDone,isMobile}){
+  const[step,setStep]=useState(0);
+  const stop=TOUR_STOPS[step];
+  const isLast=step===TOUR_STOPS.length-1;
+  const showSidebarNote=step===2&&isMobile;
+
+  // Pointer hints for desktop — which part of UI to look at
+  const hints=['','top of the screen →','left panel →','colored callout below →','the button below →','below text fields →',''];
+  const hint=!isMobile&&hints[step]?`Look for: ${hints[step]}`:'';
+
+  return<div style={{
+    position:'fixed',inset:0,background:'rgba(0,0,0,0.65)',zIndex:9999,
+    display:'flex',alignItems:'center',justifyContent:'center',padding:20,
+  }}>
+    <div style={{
+      background:'#FBF8F1',borderRadius:4,padding:'28px 28px 24px',
+      maxWidth:400,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.35)',
+      position:'relative',
+    }}>
+      {/* Step dots */}
+      <div style={{display:'flex',gap:5,marginBottom:20,justifyContent:'center'}}>
+        {TOUR_STOPS.map((_,i)=>(
+          <div key={i} style={{width:i===step?18:6,height:6,borderRadius:3,background:i===step?bpMeta.color:i<step?`${bpMeta.color}55`:'rgba(107,63,42,0.15)',transition:'all 0.3s'}}/>
+        ))}
+      </div>
+      {/* Icon */}
+      <div className="tour-icon" style={{fontSize:32,textAlign:'center',marginBottom:12}}>{stop.icon}</div>
+      {/* Title */}
+      <h2 style={{fontFamily:'Fraunces, serif',fontSize:20,fontWeight:350,color:'#27231E',textAlign:'center',marginBottom:10,lineHeight:1.2}}>{stop.title}</h2>
+      {/* Text */}
+      <p style={{fontSize:13.5,color:'#4D433B',lineHeight:1.7,textAlign:'center',marginBottom:hint?8:20}}>{stop.text}</p>
+      {/* Hint */}
+      {hint&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:9.5,color:bpMeta.color,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'center',marginBottom:18}}>{hint}</div>}
+      {/* Mobile note for sidebar step */}
+      {showSidebarNote&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'8px 12px',borderRadius:'0 2px 2px 0',fontSize:12,color:'#4D433B',marginBottom:14}}>On mobile, use the Back and Next buttons to move between sections — the section indicator below the header shows where you are.</div>}
+      {/* Buttons */}
+      <div style={{display:'flex',gap:10,justifyContent:'center'}}>
+        <button onClick={onDone} style={{background:'none',border:'1px solid rgba(107,63,42,0.2)',borderRadius:2,padding:'8px 16px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,color:'#8B7B6F',cursor:'pointer'}}>
+          Skip tour
+        </button>
+        <button className="tour-next" onClick={()=>isLast?onDone():setStep(s=>s+1)} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,fontWeight:500,cursor:'pointer',transition:'filter 0.15s'}}>
+          {isLast?'Start the intake →':'Next →'}
+        </button>
+      </div>
+      {/* Counter */}
+      <div style={{fontFamily:"'DM Mono',monospace",fontSize:9,color:'rgba(107,63,42,0.3)',textAlign:'center',marginTop:14,letterSpacing:'0.06em'}}>{step+1} of {TOUR_STOPS.length}</div>
     </div>
   </div>;
 }
@@ -1402,7 +1485,7 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
       <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
       <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {tier==='elevate'?'Elevate':'Emerge'}</span>
     </div>
-    <div style={{maxWidth:600,margin:'0 auto',padding:'52px 24px 60px'}}>
+    <div style={{maxWidth:600,margin:'0 auto',padding:'36px 18px 60px'}}>
       <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:10}}>Your website starts here</div>
       <h1 style={{fontFamily:'Fraunces, serif',fontSize:32,fontWeight:350,color:'#27231E',lineHeight:1.2,marginBottom:16}}>Let's build your site.<br/>Start with your content.</h1>
       <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:12}}>This intake walks you through every section of your {bpMeta.name} — one at a time, in the same order your site is built. For each section you will find clear guidance on what to write, how long it should be, and why it matters.</p>
@@ -1442,6 +1525,7 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
 const TONE_OPTIONS=['Professional and polished','Warm and approachable','Straight-talking and no-nonsense','Friendly and conversational','Confident and straightforward'];
 
 function ProfileStep({profile,setProfile,onNext,bpMeta}){
+  const isMobile=useIsMobile();
   const upd=(k,v)=>setProfile(p=>({...p,[k]:v}));
   const pf=(label,key,ph,hint)=><div style={{marginBottom:20}}>
     <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>{label}</div>
@@ -1449,7 +1533,7 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
     <input style={st.input} value={profile[key]||''} onChange={e=>upd(key,e.target.value)} placeholder={ph}/>
   </div>;
   return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FBF8F1'}}>
-    <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 01 of 02</div>
+    <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 01 of 03</div>
     <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Business profile</h1>
     <p style={{fontSize:13,color:'#8B7B6F',marginBottom:20}}>Pre-fills every AI writing prompt so your drafts sound like you, not a template.</p>
     <div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:24,fontSize:13,lineHeight:1.65,color:'#4D433B'}}>
@@ -1489,6 +1573,16 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
   const[submitted,setSubmitted]=useState(false);
   const[submitting,setSubmitting]=useState(false);
   const[error,setError]=useState('');
+  const isMobile=useIsMobile();
+  const tourKey=`tpc_tour_done_${bpKey}`;
+  const[showTour,setShowTour]=useState(false);
+  useEffect(()=>{
+    try{ if(!localStorage.getItem(tourKey))setShowTour(true); }catch(e){}
+  },[]);
+  const dismissTour=()=>{
+    try{localStorage.setItem(tourKey,'1');}catch(e){}
+    setShowTour(false);
+  };
   const total=ALL.length;
   const cur=ALL[step];
   const pct=Math.round(done.size/total*100);
@@ -1520,16 +1614,25 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
   </div>;
 
   return<>
-    <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 20px',flexShrink:0}}>
-      <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
+    {showTour&&<TourOverlay bpMeta={bpMeta} onDone={dismissTour} isMobile={isMobile}/>}
+    {/* Top header bar */}
+    <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 14px':'0 20px',flexShrink:0}}>
+      {!isMobile&&<span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
+      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
       <div style={{flex:1,height:3,background:'rgba(255,255,255,0.1)',borderRadius:2,overflow:'hidden'}}>
         <div style={{height:'100%',background:bpMeta.color,width:pct+'%',transition:'width 0.4s ease'}}/>
       </div>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'rgba(255,255,255,0.35)',flexShrink:0}}>{done.size}/{total}</span>
+      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'rgba(255,255,255,0.35)',flexShrink:0}}>{done.size}/{total}</span>
+      {isMobile&&<button onClick={()=>setShowTour(true)} style={{background:'none',border:'none',color:'rgba(255,255,255,0.4)',fontSize:16,cursor:'pointer',padding:'0 4px',flexShrink:0}} title="Show tour">?</button>}
     </div>
+    {/* Mobile section indicator */}
+    {isMobile&&<div style={{background:'#1E1A16',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'7px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+      <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)'}}>{cur.page.name}</span>
+      <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.06em',color:bpMeta.color}}>{cur.name.replace(' [Elevate]','').replace(' [New]','').substring(0,32)}</span>
+    </div>}
     <div style={{flex:1,display:'flex',overflow:'hidden'}}>
-      <div style={{width:196,background:'#27231E',overflowY:'auto',flexShrink:0,padding:'8px 0 24px'}}>
+      {/* Sidebar — desktop only */}
+      {!isMobile&&<div style={{width:196,background:'#27231E',overflowY:'auto',flexShrink:0,padding:'8px 0 24px'}}>
         {pages.map(pg=>{
           const si=ALL.findIndex(s=>s.page.id===pg.id);
           return<div key={pg.id}>
@@ -1548,12 +1651,13 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
             })}
           </div>;
         })}
-      </div>
-      <div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FBF8F1'}}>
-        <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
+      </div>}
+      {/* Main content area */}
+      <div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 100px':'26px 34px 40px',background:'#FBF8F1'}}>
+        {!isMobile&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
           Page {cur.page.num} — {cur.page.name}
-        </div>
-        <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'4px 0 2px'}}>
+        </div>}
+        <h1 style={{fontFamily:'Fraunces, serif',fontSize:isMobile?20:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:isMobile?'6px 0 2px':'4px 0 2px'}}>
           {cur.name.replace(' [Elevate]','').replace(' [New]','')}
           {cur.tag&&<span style={{fontSize:12,fontWeight:400,color:bpMeta.color,marginLeft:8,fontFamily:'Instrument Sans, sans-serif'}}>{cur.tag}</span>}
         </h1>
@@ -1581,12 +1685,12 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
         {error&&<div style={{marginTop:16,padding:'10px 14px',background:'rgba(148,67,28,0.08)',borderLeft:'2px solid #94431C',borderRadius:2,fontSize:13,color:'#94431C'}}>{error}</div>}
       </div>
     </div>
-    <div style={{height:60,background:'#fff',borderTop:'1px solid rgba(107,63,42,0.15)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 34px',flexShrink:0}}>
-      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#8B7B6F'}}>{cur.page.name}</span>
+    <div style={{height:isMobile?64:60,background:'#fff',borderTop:'1px solid rgba(107,63,42,0.15)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'0 16px':'0 34px',flexShrink:0,position:isMobile?'sticky':'static',bottom:0,zIndex:10}}>
+      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:isMobile?'9px 16px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
+      {!isMobile&&<span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'#8B7B6F'}}>{cur.page.name}</span>}
       {step<total-1
-        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
-        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#8B7B6F':bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
+        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:isMobile?'9px 16px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
+        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#8B7B6F':bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:isMobile?'9px 14px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
           {submitting?'Sending…':'Submit content ✓'}
         </button>}
     </div>
