@@ -25,11 +25,17 @@ function getBlueprintPages(bp, tier) {
 
 function getParam(k){try{return new URLSearchParams(window.location.search).get(k)||'';}catch{return '';}}
 
-function buildPayload(bp,tier,profile,data,pages){
+function buildPayload(bp,tier,profile,data,pages,design){
   const meta=BP_META[bp]||BP_META.quote;
+  const dd=DESIGN_DATA[bp]||DESIGN_DATA.quote;
+  const selPal=dd.palettes.find(p=>p.id===(design?.paletteId||'A'))||dd.palettes[0];
+  const selFont=dd.fonts.find(f=>f.id===(design?.fontId||'A'))||dd.fonts[0];
   const payload={
     _subject:`${meta.name} (${tier==='elevate'?'Elevate':'Emerge'}) — ${profile.biz||'New Client'} Submission`,
     _format:'plain',
+    '--- Design Selections ---':'',
+    'Color palette':`${selPal.name} — ${selPal.vibe} | Primary: ${selPal.primary} · BG: ${selPal.bg} · Dark: ${selPal.dark} · Text: ${selPal.text} · Accent: ${selPal.accent}`,
+    'Font pairing':`${selFont.name} — ${selFont.vibe} | Heading: ${selFont.heading} · Body: ${selFont.body} · Eyebrow: ${selFont.eyebrow}`,
     '--- Business Profile ---':'',
     'Business name':profile.biz||'(not provided)',
     'Owner':profile.owner||'(not provided)',
@@ -1141,6 +1147,185 @@ const SHOP_ELEVATE=[
       fields:[{id:'faqs',label:'All FAQ items',type:'cards',guidance:'8–15 questions covering shipping, returns, care, ingredients, and ordering',min:8,max:15,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–80 words',multi:true}]}]},
   ]},
 ];
+
+/* ─── Design Data ────────────────────────────────────────── */
+const DESIGN_DATA = {
+  quote: {
+    palettes: [
+      { id:'A', name:'Forest & Slate',   vibe:'Outdoorsy & earthy',          primary:'#3B5640', bg:'#F5F4F0', dark:'#1E2420', text:'#3D3D35', accent:'#8C6D3F' },
+      { id:'B', name:'Navy & Stone',     vibe:'Authoritative & professional', primary:'#1E3A5F', bg:'#F4F3EF', dark:'#151E2B', text:'#363636', accent:'#C17F3B' },
+      { id:'C', name:'Deep Slate',       vibe:'Clean & versatile',            primary:'#374151', bg:'#F9F8F5', dark:'#111827', text:'#4B5563', accent:'#B45309' },
+    ],
+    fonts: [
+      { id:'A', name:'Modern & Bold',       vibe:'Confident, no-nonsense',   heading:'Syne',              body:'Inter',          eyebrow:'Space Mono',    gp:'family=Syne:wght@700&family=Inter:wght@400;500&family=Space+Mono' },
+      { id:'B', name:'Strong & Direct',     vibe:'Solid, reliable, clear',   heading:'Oswald',            body:'Source Sans 3',  eyebrow:'IBM Plex Mono', gp:'family=Oswald:wght@400;600&family=Source+Sans+3:wght@400;500&family=IBM+Plex+Mono' },
+      { id:'C', name:'Clean & Utilitarian', vibe:'Practical, approachable',  heading:'Barlow Condensed',  body:'Barlow',         eyebrow:'Inconsolata',   gp:'family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500&family=Inconsolata' },
+    ],
+  },
+  consultation: {
+    palettes: [
+      { id:'A', name:'Dusty Sage',   vibe:'Grounded & approachable', primary:'#6B7F6E', bg:'#F7F5F0', dark:'#252B26', text:'#454540', accent:'#C4956A' },
+      { id:'B', name:'Deep Teal',    vibe:'Credentialed & focused',  primary:'#2C5F6A', bg:'#F5F7F7', dark:'#1A2E33', text:'#3D4A4C', accent:'#B07D5A' },
+      { id:'C', name:'Warm Taupe',   vibe:'Warm & relational',       primary:'#8C7B6B', bg:'#FAF8F5', dark:'#2C2420', text:'#4A3F38', accent:'#5B7FA6' },
+    ],
+    fonts: [
+      { id:'A', name:'Elegant & Credentialed', vibe:'Expert, refined, trustworthy', heading:'Cormorant Garamond', body:'Nunito Sans',    eyebrow:'DM Mono',      gp:'family=Cormorant+Garamond:wght@400;600&family=Nunito+Sans:wght@400;500&family=DM+Mono' },
+      { id:'B', name:'Clean & Professional',   vibe:'Clear, modern, dependable',   heading:'Libre Franklin',    body:'Mulish',         eyebrow:'Space Mono',   gp:'family=Libre+Franklin:wght@400;600&family=Mulish:wght@400;500&family=Space+Mono' },
+      { id:'C', name:'Warm & Authoritative',   vibe:'Human, wise, approachable',   heading:'Lora',              body:'Source Sans 3',  eyebrow:'Courier Prime', gp:'family=Lora:wght@400;600&family=Source+Sans+3:wght@400;500&family=Courier+Prime' },
+    ],
+  },
+  booking: {
+    palettes: [
+      { id:'A', name:'Blush & Champagne', vibe:'Soft & feminine',           primary:'#C4907A', bg:'#FBF8F5', dark:'#2B1F1A', text:'#4D3A33', accent:'#8B7355' },
+      { id:'B', name:'Rich Plum',         vibe:'Luxurious & editorial',     primary:'#6B4C6E', bg:'#F8F5FA', dark:'#1E1220', text:'#3D2E40', accent:'#C4956A' },
+      { id:'C', name:'Warm Slate',        vibe:'Clean & wellness-forward',  primary:'#4A6670', bg:'#F5F8F9', dark:'#1A2428', text:'#364248', accent:'#C49A6C' },
+    ],
+    fonts: [
+      { id:'A', name:'Classic Beauty',    vibe:'Timeless, aspirational',     heading:'Playfair Display', body:'Lato',    eyebrow:'Jost',         gp:'family=Playfair+Display:wght@400;700&family=Lato:wght@400&family=Jost:wght@400;500' },
+      { id:'B', name:'Luxury & Airy',     vibe:'High-end, refined, elegant', heading:'Cormorant',        body:'DM Sans', eyebrow:'Space Mono',   gp:'family=Cormorant:wght@400;600&family=DM+Sans:wght@400;500&family=Space+Mono' },
+      { id:'C', name:'Soft & Boutique',   vibe:'Gentle, personal, inviting', heading:'Marcellus',        body:'Nunito',  eyebrow:'Courier Prime', gp:'family=Marcellus&family=Nunito:wght@400;500&family=Courier+Prime' },
+    ],
+  },
+  inquiry: {
+    palettes: [
+      { id:'A', name:'Warm Neutral',   vibe:'Timeless & editorial',        primary:'#A0856A', bg:'#FAF7F3', dark:'#1E1712', text:'#4A3B30', accent:'#6B8C7A' },
+      { id:'B', name:'Moody Green',    vibe:'Organic & lush',              primary:'#4A6355', bg:'#F5F7F4', dark:'#161E18', text:'#364040', accent:'#B8956A' },
+      { id:'C', name:'Deep Burgundy',  vibe:'Dramatic & romantic',         primary:'#7A3B45', bg:'#FAF5F5', dark:'#1E1012', text:'#4A2B30', accent:'#C4A882' },
+    ],
+    fonts: [
+      { id:'A', name:'Editorial & Cinematic', vibe:'Documentary, weighty, honest',    heading:'Libre Baskerville', body:'Raleway', eyebrow:'Courier Prime', gp:'family=Libre+Baskerville:wght@400;700&family=Raleway:wght@400;500&family=Courier+Prime' },
+      { id:'B', name:'Romantic & Modern',     vibe:'Refined, elevated, atmospheric',  heading:'Cormorant Garamond',body:'Jost',    eyebrow:'Space Mono',    gp:'family=Cormorant+Garamond:wght@400;600&family=Jost:wght@400;500&family=Space+Mono' },
+      { id:'C', name:'Moody & Artistic',      vibe:'Expressive, raw, unforgettable',  heading:'IM Fell English',   body:'Lato',    eyebrow:'DM Mono',       gp:'family=IM+Fell+English&family=Lato:wght@400&family=DM+Mono' },
+    ],
+  },
+  shop: {
+    palettes: [
+      { id:'A', name:'Artisan Warm',    vibe:'Handcrafted & tactile',         primary:'#B07848', bg:'#FBF8F3', dark:'#241A10', text:'#4A3828', accent:'#6B8C6E' },
+      { id:'B', name:'Clean & Modern',  vibe:'Elevated & minimalist',         primary:'#3D6B6B', bg:'#F4F8F8', dark:'#141E1E', text:'#334040', accent:'#C4956A' },
+      { id:'C', name:'Bold & Playful',  vibe:'Energetic & statement-making',  primary:'#C4483C', bg:'#FFF8F5', dark:'#1E0E0C', text:'#4A2820', accent:'#F0A832' },
+    ],
+    fonts: [
+      { id:'A', name:'Boutique & Editorial', vibe:'High-contrast, packaging-worthy', heading:'Bodoni Moda',   body:'Karla',  eyebrow:'Space Grotesk', gp:'family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&family=Karla:wght@400;500&family=Space+Grotesk:wght@400;500' },
+      { id:'B', name:'Classic & Clean',      vibe:'Timeless, trustworthy, polished', heading:'Playfair Display',body:'Mulish', eyebrow:'DM Mono',      gp:'family=Playfair+Display:wght@400;700&family=Mulish:wght@400;500&family=DM+Mono' },
+      { id:'C', name:'Bold & Playful',       vibe:'Fun, memorable, full of energy',  heading:'Abril Fatface', body:'Nunito', eyebrow:'Jost',          gp:'family=Abril+Fatface&family=Nunito:wght@400;500&family=Jost:wght@400;500' },
+    ],
+  },
+};
+
+/* ─── Design Step Component ──────────────────────────────── */
+function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
+  const dd=DESIGN_DATA[bpKey]||DESIGN_DATA.quote;
+  const selPal=dd.palettes.find(p=>p.id===design.paletteId)||dd.palettes[0];
+  const selFont=dd.fonts.find(f=>f.id===design.fontId)||dd.fonts[0];
+
+  useEffect(()=>{
+    const id='design-fonts-'+bpKey;
+    if(!document.getElementById(id)){
+      const allGp=dd.fonts.map(f=>f.gp).join('&');
+      const link=document.createElement('link');
+      link.id=id; link.rel='stylesheet';
+      link.href=`https://fonts.googleapis.com/css2?${allGp}&display=swap`;
+      document.head.appendChild(link);
+    }
+  },[bpKey]);
+
+  const setPal=id=>setDesign(d=>({...d,paletteId:id}));
+  const setFont=id=>setDesign(d=>({...d,fontId:id}));
+
+  // Live preview card
+  const preview=<div style={{
+    background:selPal.bg,border:`1px solid ${selPal.accent}33`,borderRadius:4,
+    padding:'28px 32px',marginBottom:32,transition:'all 0.3s ease',
+    boxShadow:`0 2px 20px ${selPal.dark}10`,
+  }}>
+    <div style={{fontFamily:`'${selFont.eyebrow}', monospace`,fontSize:9.5,letterSpacing:'0.14em',textTransform:'uppercase',color:selPal.accent,marginBottom:10,transition:'all 0.3s'}}>{bpMeta.name.replace(' Blueprint','')} · Live Preview</div>
+    <div style={{fontFamily:`'${selFont.heading}', serif`,fontSize:26,fontWeight:700,color:selPal.dark,lineHeight:1.15,marginBottom:10,transition:'all 0.3s'}}>{
+      {quote:'Professional services, delivered right.', consultation:'Clarity and momentum, starting here.',
+       booking:'Book your appointment in seconds.', inquiry:'The work. The feeling. The story.',
+       shop:'Handcrafted with intention.'}[bpKey]||'Your website, your way.'
+    }</div>
+    <div style={{fontFamily:`'${selFont.body}', sans-serif`,fontSize:13.5,color:selPal.text,lineHeight:1.7,marginBottom:18,maxWidth:400,transition:'all 0.3s'}}>
+      Every detail of your site is designed around how your business actually converts visitors into clients — so it works while you focus on the work.
+    </div>
+    <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+      <button style={{background:selPal.primary,color:selPal.bg,border:'none',borderRadius:2,padding:'9px 20px',fontFamily:`'${selFont.body}', sans-serif`,fontSize:13,fontWeight:500,cursor:'default',transition:'all 0.3s'}}>{bpMeta.cta}</button>
+      <div style={{display:'flex',gap:6}}>
+        {[selPal.primary,selPal.bg,selPal.dark,selPal.text,selPal.accent].map((c,i)=>(
+          <div key={i} style={{width:18,height:18,borderRadius:'50%',background:c,border:`1px solid ${selPal.dark}20`,transition:'background 0.3s'}}/>
+        ))}
+      </div>
+    </div>
+    <div style={{marginTop:16,paddingTop:14,borderTop:`1px solid ${selPal.dark}10`,display:'flex',gap:16,flexWrap:'wrap'}}>
+      <span style={{fontFamily:`'${selFont.eyebrow}', monospace`,fontSize:9,color:selPal.accent,letterSpacing:'0.1em',textTransform:'uppercase'}}>Heading: {selFont.heading}</span>
+      <span style={{fontFamily:`'${selFont.eyebrow}', monospace`,fontSize:9,color:selPal.text,letterSpacing:'0.1em',textTransform:'uppercase'}}>Body: {selFont.body}</span>
+      <span style={{fontFamily:`'${selFont.eyebrow}', monospace`,fontSize:9,color:selPal.text,letterSpacing:'0.1em',textTransform:'uppercase'}}>Eyebrow: {selFont.eyebrow}</span>
+    </div>
+  </div>;
+
+  // Palette cards
+  const paletteCards=<div style={{marginBottom:32}}>
+    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Color palette</div>
+    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>Choose the palette that feels most like your brand — or the direction you want to grow into.</p>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+      {dd.palettes.map(pal=>{
+        const isSel=design.paletteId===pal.id||((!design.paletteId)&&pal.id==='A');
+        return<div key={pal.id} onClick={()=>setPal(pal.id)} style={{
+          border:`2px solid ${isSel?bpMeta.color:'rgba(107,63,42,0.15)'}`,
+          borderRadius:4,padding:12,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
+          transition:'all 0.15s',
+        }}>
+          <div style={{display:'flex',gap:5,marginBottom:9}}>
+            {[pal.primary,pal.bg,pal.dark,pal.text,pal.accent].map((c,i)=>(
+              <div key={i} style={{flex:1,height:22,borderRadius:2,background:c,border:'1px solid rgba(0,0,0,0.06)'}}/>
+            ))}
+          </div>
+          <div style={{fontSize:12,fontWeight:500,color:'#27231E',marginBottom:2}}>{pal.name}</div>
+          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#8B7B6F',letterSpacing:'0.04em'}}>{pal.vibe}</div>
+          {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
+        </div>;
+      })}
+    </div>
+  </div>;
+
+  // Font cards
+  const fontCards=<div style={{marginBottom:32}}>
+    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Font pairing</div>
+    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>All three options are curated for {bpMeta.industry}. See how each one feels in the preview above.</p>
+    <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+      {dd.fonts.map(font=>{
+        const isSel=design.fontId===font.id||((!design.fontId)&&font.id==='A');
+        return<div key={font.id} onClick={()=>setFont(font.id)} style={{
+          border:`2px solid ${isSel?bpMeta.color:'rgba(107,63,42,0.15)'}`,
+          borderRadius:4,padding:14,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
+          transition:'all 0.15s',
+        }}>
+          <div style={{fontFamily:`'${font.eyebrow}', monospace`,fontSize:8.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F',marginBottom:5}}>{font.eyebrow}</div>
+          <div style={{fontFamily:`'${font.heading}', serif`,fontSize:17,fontWeight:700,color:'#27231E',lineHeight:1.2,marginBottom:5}}>{font.heading}</div>
+          <div style={{fontFamily:`'${font.body}', sans-serif`,fontSize:11.5,color:'#4D433B',lineHeight:1.5,marginBottom:8}}>Body text in {font.body}. Clear and readable.</div>
+          <div style={{fontSize:11,fontWeight:500,color:'#27231E',marginBottom:1}}>{font.name}</div>
+          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#8B7B6F',letterSpacing:'0.03em'}}>{font.vibe}</div>
+          {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
+        </div>;
+      })}
+    </div>
+  </div>;
+
+  return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FBF8F1'}}>
+    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
+    <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Design preferences</h1>
+    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
+    {preview}
+    {paletteCards}
+    {fontCards}
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:8}}>
+      <button onClick={onBack} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,cursor:'pointer'}}>← Back</button>
+      <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
+        Start content intake →
+      </button>
+    </div>
+  </div>;
+}
+
 /* ─── Link Generator ─────────────────────────────────────── */
 function LinkGenerator({onBack}){
   const[drive,setDrive]=useState('');
@@ -1172,8 +1357,8 @@ function LinkGenerator({onBack}){
         <div>
           <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
-            <option value="emerge">Emerge — {bp === 'shop' ? '$249' : '$149'}/mo</option>
-            <option value="elevate">Elevate — {bp === 'shop' ? '$449' : '$349'}/mo</option>
+            <option value="emerge">Emerge — $149/mo</option>
+            <option value="elevate">Elevate — $349/mo</option>
           </select>
         </div>
       </div>
@@ -1295,7 +1480,7 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
 }
 
 /* ─── Main Intake ────────────────────────────────────────── */
-function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier}){
+function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
   const ALL=pages.flatMap(p=>p.sections.map(s=>({...s,page:p})));
   const[step,setStep]=useState(0);
   const[data,setData]=useState({});
@@ -1317,7 +1502,7 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier}){
   const handleSubmit=async()=>{
     setSubmitting(true);setError('');setDone(p=>new Set([...p,step]));
     try{
-      const payload=buildPayload(bpKey,tier,profile,data,pages);
+      const payload=buildPayload(bpKey,tier,profile,data,pages,design);
       const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)});
       if(res.ok){setSubmitted(true);}else{setError('Something went wrong. Please try again or email your content directly to Victoria.');}
     }catch(e){setError('Network error. Please check your connection and try again.');}
@@ -1412,6 +1597,7 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier}){
 export default function App(){
   const[screen,setScreen]=useState('landing');
   const[profile,setProfile]=useState({});
+  const[design,setDesign]=useState({paletteId:'A',fontId:'A'});
   const driveUrl=getParam('drive');
   const bpKey=getParam('blueprint')||'quote';
   const tier=getParam('tier')||'emerge';
@@ -1433,8 +1619,9 @@ export default function App(){
     <style>{FONTS+INTAKE_CSS}</style>
     <div style={{height:'100vh',display:'flex',flexDirection:'column'}}>
       {screen==='landing'&&<LandingPage onStart={()=>setScreen('profile')} driveUrl={driveUrl} bpMeta={bpMeta} tier={tier} onGenerator={()=>setScreen('generator')}/>}
-      {screen==='profile'&&<><Header/><div style={{flex:1,overflowY:'auto'}}><ProfileStep profile={profile} setProfile={setProfile} onNext={()=>setScreen('intake')} bpMeta={bpMeta}/></div></>}
-      {screen==='intake'&&<Intake profile={profile} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier}/>}
+      {screen==='profile'&&<><Header/><div style={{flex:1,overflowY:'auto'}}><ProfileStep profile={profile} setProfile={setProfile} onNext={()=>setScreen('design')} bpMeta={bpMeta}/></div></>}
+      {screen==='design'&&<><Header/><div style={{flex:1,overflowY:'auto',display:'flex',flexDirection:'column'}}><DesignStep bpKey={bpKey} bpMeta={bpMeta} design={design} setDesign={setDesign} onNext={()=>setScreen('intake')} onBack={()=>setScreen('profile')}/></div></>}
+      {screen==='intake'&&<Intake profile={profile} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier} design={design}/>}
     </div>
   </>;
 }
