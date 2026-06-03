@@ -1346,17 +1346,17 @@ const TOUR_STOPS = [
   { icon:'👋', title:'Welcome to your intake!',
     text:'This walks you through every section of your site one at a time. It takes most people 45–60 minutes. Click Next for a quick orientation, or skip straight to the form.' },
   { icon:'📊', title:'Track your progress',
-    text:'The bar at the top fills as you complete sections. The counter on the right shows exactly how far along you are. You'll see it update with every section you finish.' },
+    text:'The bar at the top fills as you complete sections. The counter on the right shows exactly how far along you are. You\'ll see it update with every section you finish.' },
   { icon:'🗂️', title:'Navigate by section',
     text:'Every page and section of your site is listed in the left panel. Completed sections show a colored dot. You can jump to any section at any time — your answers are saved as you go.' },
   { icon:'💡', title:'Why it matters',
-    text:'Each section opens with a callout explaining how that specific content affects your site's performance. Worth a quick read before you start writing — it gives context for what Victoria is building.' },
+    text:'Each section opens with a callout explaining how that specific content affects your site\'s performance. Worth a quick read before you start writing — it gives context for what Victoria is building.' },
   { icon:'✦', title:'Stuck? Use the AI prompt',
     text:'Every writing section has an AI prompt pre-loaded with your business info. Tap "AI writing prompt," copy it, paste it into Claude or ChatGPT, and edit the result until it sounds like you.' },
   { icon:'📝', title:'Word count guide',
-    text:'The word count below each text field turns green when you're in the target range. If it's grey you're under — if it's red you've gone a bit over. These ranges are Victoria's recommendations, not hard limits.' },
-  { icon:'✓', title:'You're all set!',
-    text:'Work through the sections at your own pace. You can stop and come back — just don't close the tab without submitting. When you finish the last section, hit Submit and Victoria takes it from there.' },
+    text:'The word count below each text field turns green when you\'re in the target range. If it\'s grey you\'re under — if it\'s red you\'ve gone a bit over. These ranges are Victoria\'s recommendations, not hard limits.' },
+  { icon:'✓', title:'You\'re all set!',
+    text:'Work through the sections at your own pace. You can stop and come back — just don\'t close the tab without submitting. When you finish the last section, hit Submit and Victoria takes it from there.' },
 ];
 
 function TourOverlay({bpMeta,onDone,isMobile}){
