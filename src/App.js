@@ -9,16 +9,19 @@ const BP_META = {
   booking:      { name:'Booking Blueprint',      color:'#1A3A52', cta:'Book an Appointment',  industry:'salons, spas, appointment-based businesses' },
   inquiry:      { name:'Inquiry Blueprint',      color:'#7D5E50', cta:'Start Your Inquiry',   industry:'photographers, event vendors, creative businesses' },
   shop:         { name:'Shop Blueprint',         color:'#C98D26', cta:'Shop Now',             industry:'makers, artisans, product-based businesses' },
+  speaker:      { name:'Speaker Blueprint',      color:'#5C4A6B', cta:'Inquire About Booking', industry:'speakers and authors' },
 };
 
 function getBlueprintPages(bp, tier) {
   const allEmerge = {
     quote: QUOTE_EMERGE, consultation: CONSULTATION_EMERGE,
     booking: BOOKING_EMERGE, inquiry: INQUIRY_EMERGE, shop: SHOP_EMERGE,
+    speaker: SPEAKER_BLUEPRINT,
   };
   const allElevate = {
     quote: QUOTE_ELEVATE, consultation: CONSULTATION_ELEVATE,
     booking: BOOKING_ELEVATE, inquiry: INQUIRY_ELEVATE, shop: SHOP_ELEVATE,
+    speaker: SPEAKER_BLUEPRINT,
   };
   return tier === 'elevate' ? (allElevate[bp] || allElevate.quote) : (allEmerge[bp] || allEmerge.quote);
 }
@@ -31,7 +34,7 @@ function buildPayload(bp,tier,profile,data,pages,design){
   const selPal=dd.palettes.find(p=>p.id===(design?.paletteId||'A'))||dd.palettes[0];
   const selFont=dd.fonts.find(f=>f.id===(design?.fontId||'A'))||dd.fonts[0];
   const payload={
-    _subject:`${meta.name} (${tier==='elevate'?'Elevate':'Emerge'}) — ${profile.biz||'New Client'} Submission`,
+    _subject:`${meta.name} (${meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}) — ${profile.biz||'New Client'} Submission`,
     _format:'plain',
     '--- Design Selections ---':'',
     'Color palette':`${selPal.name} — ${selPal.vibe} | Primary: ${selPal.primary} · BG: ${selPal.bg} · Dark: ${selPal.dark} · Text: ${selPal.text} · Accent: ${selPal.accent}`,
@@ -1161,6 +1164,78 @@ const SHOP_ELEVATE=[
   ]},
 ];
 
+/* ─── SPEAKER BLUEPRINT (flat-rate one-pager) ─────────────── */
+const SPEAKER_BLUEPRINT=[
+  {num:'01',id:'speaker',name:'The Speaker Blueprint — One Page',sections:[
+    {id:'hero',name:'Hero',sub:'Your photo, name, and one-line positioning',
+      why:'The first thing an event planner sees. It needs to say who you are and what you speak about — clearly enough that they know in five seconds whether to keep reading.',
+      prompt:(p)=>`I am ${p.owner||'[name]'}, a speaker who talks about ${p.differentiator||'[your core topic or area of expertise]'}. My audience is typically ${p.ideal||'[type of event / audience]'}. Write 5 one-line positioning statements for a speaker website hero, under 14 words each. Should communicate who I help and what I speak about — not a job title. Tone: ${p.tone||'confident, warm, direct'}.`,
+      fields:[
+        {id:'photo',label:'Speaker photo or speaking shot',type:'upnote',guidance:'1 image · high-resolution · ideally you on stage or a strong portrait'},
+        {id:'name',label:'Name as it should appear',type:'text',guidance:'',ph:'e.g. Dr. Sabrina Jackson'},
+        {id:'tagline',label:'One-line positioning',type:'text',guidance:'6–14 words',ph:'e.g. Helping leaders turn burnout into their next breakthrough.'},
+        {id:'cta',label:'Primary CTA button text',type:'text',guidance:'3–6 words',ph:'e.g. Inquire About Booking'},
+      ]},
+    {id:'topics',name:'Speaking topics',sub:'2–4 talks or topic areas',
+      why:'This is what event planners are actually shopping for. A planner scans this section before anything else — without it, the rest of the site can\u2019t do its job.',
+      prompt:(p)=>`I am a speaker who talks about ${p.differentiator||'[core topic]'} for audiences like ${p.ideal||'[type of audience]'}. List 2–4 signature talks or topic areas. For each, write a title (3–8 words) and a 2–3 sentence description of what the audience walks away with. Tone: ${p.tone||'confident, specific, outcome-focused'}.`,
+      fields:[{id:'talks',label:'Speaking topics',type:'cards',guidance:'2–4 topics',min:2,max:4,lbl:'Topic',subs:[
+        {id:'title',label:'Talk title',ph:'e.g. From Burnout to Breakthrough',guidance:'3–8 words'},
+        {id:'desc',label:'Description',ph:'What this talk covers and what the audience walks away with.',guidance:'30–60 words',multi:true},
+      ]}]},
+    {id:'video',name:'Watch them speak',sub:'A clip of you on stage',
+      why:'The single most important section on the page. Event organizers rarely book a speaker they haven\u2019t seen — this is what turns interest into an inquiry.',
+      fields:[
+        {id:'videourl',label:'Video link (YouTube or Vimeo)',type:'text',guidance:'2–5 minutes ideal',ph:'https://youtube.com/watch?v=...'},
+        {id:'videonote',label:'Notes for Victoria',type:'textarea',guidance:'Optional',ph:'e.g. "Use the 3-minute clip from the 2024 keynote — that\'s my strongest one." If you don\'t have a clip yet, let me know and we can talk through options.'},
+      ]},
+    {id:'credentials',name:'Credentials & past venues',sub:'Where you\u2019ve spoken or been featured',
+      why:'Scannable proof. A logo strip of recognizable names does more work in three seconds than a paragraph of bio ever could.',
+      fields:[
+        {id:'venues',label:'Past venues, conferences, publications, or features',type:'rep',guidance:'4–10 items',ph:'e.g. TEDx Detroit · Forbes · Essence Festival',min:3,max:10},
+        {id:'logos',label:'Logo files (if you have them)',type:'upnote',guidance:'Optional · official logos for the venues/publications listed above, if available'},
+      ]},
+    {id:'about',name:'About',sub:'Who you are, beyond the topics',
+      why:'A short, warm bio paired with a portrait. This is where a planner gets a sense of you as a person — not just a subject-matter expert.',
+      prompt:(p)=>`I am ${p.owner||'[name]'}, a speaker who talks about ${p.differentiator||'[core topic]'}. Background: [your story — what led you to this work, relevant experience, what you care about]. Write two versions of my bio for a speaker website: a short version (40–60 words) and a long version (120–160 words). Warm, specific, third person. Tone: ${p.tone||'warm, credible, approachable'}.`,
+      fields:[
+        {id:'bioshort',label:'Short bio',type:'textarea',guidance:'40–60 words',ph:'A quick-read version — who you are and what you speak about.'},
+        {id:'biolong',label:'Long bio',type:'textarea',guidance:'120–160 words',ph:'The fuller story — background, what led you to this work, what you care about.'},
+        {id:'portrait',label:'Portrait photo',type:'upnote',guidance:'1 photo · warm and approachable · can be the same as your hero photo'},
+      ]},
+    {id:'books',name:'Books (if applicable)',sub:'Skip this section if you don\u2019t have a published book',
+      why:'Speakers who are also published authors get a credibility boost from their book(s) — but this is a discovery layer, not a store. If you don\u2019t have a book, select "No" below and skip ahead to Testimonials.',
+      fields:[
+        {id:'hasbook',label:'Are you a published author?',type:'sel',options:['Yes — include my book(s)','No — skip this section']},
+        {id:'books',label:'Your book(s)',type:'cards',guidance:'Leave blank if you selected "No" above',min:0,max:4,lbl:'Book',subs:[
+          {id:'title',label:'Book title',ph:'e.g. The Breakthrough Mindset',guidance:''},
+          {id:'cover',label:'Cover image',ph:'Note: upload the cover image to your project folder',guidance:''},
+          {id:'link',label:'Retailer link',ph:'e.g. https://bookshop.org/...',guidance:''},
+          {id:'desc',label:'One-line description',ph:'e.g. A practical guide to turning setbacks into your next chapter.',guidance:'10–20 words'},
+        ]}]},
+    {id:'testimonials',name:'Testimonials',sub:'2–3 quotes from event organizers or audiences',
+      why:'Voice-of-the-buyer matters more here than reader reviews. Planners want to know what it\u2019s like to work with you and what your talk did for their audience.',
+      fields:[{id:'quotes',label:'Testimonials',type:'cards',guidance:'2–3 quotes',min:2,max:3,lbl:'Testimonial',subs:[
+        {id:'text',label:'Quote',ph:'Choose quotes that speak to the impact of the talk or the experience of working with you — not just "great speaker!"',guidance:'30–80 words',multi:true},
+        {id:'attribution',label:'Name, role, and organization',ph:'e.g. Maria Lopez, Events Director, Detroit Chamber of Commerce',guidance:''},
+      ]}]},
+    {id:'inquiry',name:'Inquiry form',sub:'How event planners reach you',
+      why:'The form is the conversion point of the entire site. Keep it short and warm — it should feel like the start of a conversation, not paperwork.',
+      fields:[
+        {id:'destemail',label:'Email address for inquiry submissions',type:'text',guidance:'',ph:'e.g. hello@yourname.com'},
+        {id:'intro',label:'Short intro line above the form',type:'text',guidance:'8–18 words',ph:'e.g. Tell me a little about your event and I\'ll get back to you within 2 business days.'},
+        {id:'fields',label:'Fields to include on the form',type:'checks',options:['Event type','Event date','Location','Expected audience size','Topic of interest','Budget range','Message / additional details']},
+      ]},
+    {id:'brand',name:'Branding & footer',sub:'Colors, social links, and final details',
+      why:'Your site is branded around you — colors and fonts that match your voice, plus the social links and legal essentials that round out the footer.',
+      fields:[
+        {id:'colornote',label:'Color preferences',type:'textarea',guidance:'Optional',ph:'e.g. "Use the colors from my book cover" or "I like warm, earthy tones." If left blank, Victoria will choose a palette that fits your photos and topics.'},
+        {id:'social',label:'Social links for the footer',type:'rep',guidance:'Add as many as apply',ph:'e.g. instagram.com/yourname',min:1,max:6},
+        {id:'privacy',label:'Privacy policy',type:'sel',options:['Use Termageddon (recommended — included in your build, $149/yr billed annually starting before launch)','I\u2019ll bring my own privacy policy (requires signing Termageddon\u2019s partner waiver)']},
+      ]},
+  ]},
+];
+
 /* ─── Design Data ────────────────────────────────────────── */
 const DESIGN_DATA = {
   quote: {
@@ -1221,6 +1296,18 @@ const DESIGN_DATA = {
       { id:'A', name:'Boutique & Editorial', vibe:'High-contrast, packaging-worthy', heading:'Bodoni Moda',   body:'Karla',  eyebrow:'Space Grotesk', gp:'family=Bodoni+Moda:opsz,wght@6..96,400;6..96,700&family=Karla:wght@400;500&family=Space+Grotesk:wght@400;500' },
       { id:'B', name:'Classic & Clean',      vibe:'Timeless, trustworthy, polished', heading:'Playfair Display',body:'Mulish', eyebrow:'DM Mono',      gp:'family=Playfair+Display:wght@400;700&family=Mulish:wght@400;500&family=DM+Mono' },
       { id:'C', name:'Bold & Playful',       vibe:'Fun, memorable, full of energy',  heading:'Abril Fatface', body:'Nunito', eyebrow:'Jost',          gp:'family=Abril+Fatface&family=Nunito:wght@400;500&family=Jost:wght@400;500' },
+    ],
+  },
+  speaker: {
+    palettes: [
+      { id:'A', name:'Dusty Aubergine',  vibe:'Literary & quietly confident',  primary:'#5C4A6B', bg:'#FBF8F1', dark:'#27231E', text:'#4D433B', accent:'#94431C' },
+      { id:'B', name:'Ink & Parchment',  vibe:'Editorial & timeless',          primary:'#3D3A4A', bg:'#F7F4ED', dark:'#1C1A22', text:'#42403D', accent:'#B8956A' },
+      { id:'C', name:'Stage Warm',       vibe:'Energetic & approachable',      primary:'#A0522D', bg:'#FBF8F1', dark:'#27231E', text:'#4D433B', accent:'#5C4A6B' },
+    ],
+    fonts: [
+      { id:'A', name:'Literary & Wonky',     vibe:'Distinctive, warm, a little unexpected', heading:'Fraunces',  body:'Instrument Sans', eyebrow:'DM Mono',       gp:'family=Fraunces:opsz,wght@9..144,350&family=Instrument+Sans:wght@400;500&family=DM+Mono' },
+      { id:'B', name:'Editorial & Confident', vibe:'Polished, credentialed, magazine-like', heading:'Libre Baskerville', body:'Source Sans 3', eyebrow:'Space Mono', gp:'family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500&family=Space+Mono' },
+      { id:'C', name:'Modern & Direct',       vibe:'Contemporary, TED-talk energy',         heading:'Syne',      body:'Inter',           eyebrow:'IBM Plex Mono', gp:'family=Syne:wght@700&family=Inter:wght@400;500&family=IBM+Plex+Mono' },
     ],
   },
 };
@@ -1453,7 +1540,7 @@ function LinkGenerator({onBack}){
       <div style={{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:16,marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
           <div style={{width:10,height:10,borderRadius:'50%',background:meta.color,flexShrink:0}}/>
-          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F'}}>{meta.name} · {tier==='elevate'?'Elevate':'Emerge'}</span>
+          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F'}}>{meta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
         </div>
         <div style={{fontSize:12,color:'#27231E',wordBreak:'break-all',lineHeight:1.6,marginBottom:12}}>{link}</div>
         <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(107,63,42,0.06)',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'7px 14px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#8B7B6F',cursor:'pointer',transition:'all 0.15s'}}>
@@ -1471,7 +1558,15 @@ function LinkGenerator({onBack}){
 
 /* ─── Landing Page ────────────────────────────────────────── */
 function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
-  const checklist=[
+  const isSpeaker=bpMeta.name==='Speaker Blueprint';
+  const checklist=isSpeaker?[
+    'A high-resolution photo of you — on stage or a strong portrait',
+    'A link to a video of you speaking (YouTube or Vimeo, 2–5 minutes ideal)',
+    'A list of past venues, conferences, or features',
+    '2–3 testimonials from event organizers or audiences',
+    'Your book(s), if you have any — cover images and retailer links',
+    'Social media profile links',
+  ]:[
     'Your logo file (PNG or SVG with transparent background)',
     'Brand colors — hex codes if you have them',
     'Your best photos — finished work, headshots, or product images',
@@ -1480,16 +1575,17 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
     'Any credentials, certifications, or professional standing',
     'Your social media profile links',
   ];
+  const timeEstimate=isSpeaker?'25–35 minutes':'45–60 minutes';
   return<div style={{minHeight:'100vh',background:'#FBF8F1',fontFamily:'Instrument Sans, sans-serif',color:'#4D433B'}}>
     <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
       <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {tier==='elevate'?'Elevate':'Emerge'}</span>
+      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
     </div>
     <div style={{maxWidth:600,margin:'0 auto',padding:'36px 18px 60px'}}>
       <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:10}}>Your website starts here</div>
       <h1 style={{fontFamily:'Fraunces, serif',fontSize:32,fontWeight:350,color:'#27231E',lineHeight:1.2,marginBottom:16}}>Let's build your site.<br/>Start with your content.</h1>
       <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:12}}>This intake walks you through every section of your {bpMeta.name} — one at a time, in the same order your site is built. For each section you will find clear guidance on what to write, how long it should be, and why it matters.</p>
-      <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:32}}>When you submit, Victoria receives everything organized and ready to build from. Most clients finish in <strong>45–60 minutes</strong>.</p>
+      <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:32}}>When you submit, Victoria receives everything organized and ready to build from. Most clients finish in <strong>{timeEstimate}</strong>.</p>
       <div style={{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:20,marginBottom:32}}>
         <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Before you start — have these ready</div>
         {checklist.map((item,i)=><div key={i} style={{display:'flex',gap:12,marginBottom:10,fontSize:13.5,color:'#4D433B',lineHeight:1.5}}>
@@ -1540,12 +1636,12 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
       <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>How this is used</span>
       Everything here stays in this session only. It personalizes the AI prompts so generated copy reflects your actual business.
     </div>
-    {pf('Business name','biz','e.g. Austin Greenworks · Naomi Crawford Photography',null)}
+    {pf(bpMeta.name==='Speaker Blueprint'?'Your name':'Business name','biz',bpMeta.name==='Speaker Blueprint'?'e.g. Dr. Sabrina Jackson':'e.g. Austin Greenworks · Naomi Crawford Photography',null)}
     {pf('Your name (owner)','owner','e.g. Marcus Johnson · Naomi Crawford',null)}
-    {pf('Type of business','type','e.g. landscaping company · wedding photographer · licensed esthetician','Be specific — this goes directly into your AI prompts.')}
-    {pf('Primary service area or location','area','e.g. Austin, TX · Portland, Oregon','City and region or full coverage area.')}
+    {pf(bpMeta.name==='Speaker Blueprint'?'What you speak about':'Type of business','type',bpMeta.name==='Speaker Blueprint'?'e.g. leadership, creative resilience, burnout recovery':'e.g. landscaping company · wedding photographer · licensed esthetician','Be specific — this goes directly into your AI prompts.')}
+    {pf(bpMeta.name==='Speaker Blueprint'?'Where you\u2019re based':'Primary service area or location','area',bpMeta.name==='Speaker Blueprint'?'e.g. Based in Detroit · available to travel':'e.g. Austin, TX · Portland, Oregon','City and region — speakers can note travel availability here.')}
     {pf('In business since (year)','since','e.g. 2014',null)}
-    {pf('Your ideal customer','ideal','e.g. busy Austin homeowners · couples planning intimate Portland weddings','The person most likely to hire you or buy from you.')}
+    {pf(bpMeta.name==='Speaker Blueprint'?'Your ideal audience or event type':'Your ideal customer','ideal',bpMeta.name==='Speaker Blueprint'?'e.g. corporate leadership conferences · university audiences · women\u2019s retreats':'e.g. busy Austin homeowners · couples planning intimate Portland weddings','The audience or event type you\u2019re the best fit for.')}
     <div style={{marginBottom:20}}>
       <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>What sets you apart</div>
       <div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>The one or two things that genuinely differentiate you from anyone else doing what you do.</div>
@@ -1714,7 +1810,7 @@ export default function App(){
 
   const Header=()=><div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 20px',flexShrink:0}}>
     <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-    <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {tier==='elevate'?'Elevate':'Emerge'}</span>
+    <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
   </div>;
 
   if(screen==='generator')return<><style>{FONTS+INTAKE_CSS}</style><LinkGenerator onBack={()=>setScreen('landing')}/></>;
