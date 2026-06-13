@@ -33,12 +33,18 @@ function buildPayload(bp,tier,profile,data,pages,design){
   const dd=DESIGN_DATA[bp]||DESIGN_DATA.quote;
   const selPal=dd.palettes.find(p=>p.id===(design?.paletteId||'A'))||dd.palettes[0];
   const selFont=dd.fonts.find(f=>f.id===(design?.fontId||'A'))||dd.fonts[0];
+  const ownBranding=!!design?.ownBranding;
   const payload={
     _subject:`${meta.name} (${meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}) — ${profile.biz||'New Client'} Submission`,
     _format:'plain',
     '--- Design Selections ---':'',
-    'Color palette':`${selPal.name} — ${selPal.vibe} | Primary: ${selPal.primary} · BG: ${selPal.bg} · Dark: ${selPal.dark} · Text: ${selPal.text} · Accent: ${selPal.accent}`,
-    'Font pairing':`${selFont.name} — ${selFont.vibe} | Heading: ${selFont.heading} · Body: ${selFont.body} · Eyebrow: ${selFont.eyebrow}`,
+    'Branding source':ownBranding?'Client has existing branding (see notes below)':'Picked from Victoria\u2019s starting palettes',
+    ...(ownBranding?{
+      'Client branding notes':design?.brandingNotes||'(not provided)',
+    }:{
+      'Color palette':`${selPal.name} — ${selPal.vibe} | Primary: ${selPal.primary} · BG: ${selPal.bg} · Dark: ${selPal.dark} · Text: ${selPal.text} · Accent: ${selPal.accent}`,
+      'Font pairing':`${selFont.name} — ${selFont.vibe} | Heading: ${selFont.heading} · Body: ${selFont.body} · Eyebrow: ${selFont.eyebrow}`,
+    }),
     '--- Business Profile ---':'',
     'Business name':profile.biz||'(not provided)',
     'Owner':profile.owner||'(not provided)',
@@ -1300,14 +1306,14 @@ const DESIGN_DATA = {
   },
   speaker: {
     palettes: [
-      { id:'A', name:'Dusty Aubergine',  vibe:'Literary & quietly confident',  primary:'#5C4A6B', bg:'#FBF8F1', dark:'#27231E', text:'#4D433B', accent:'#94431C' },
-      { id:'B', name:'Ink & Parchment',  vibe:'Editorial & timeless',          primary:'#3D3A4A', bg:'#F7F4ED', dark:'#1C1A22', text:'#42403D', accent:'#B8956A' },
-      { id:'C', name:'Stage Warm',       vibe:'Energetic & approachable',      primary:'#A0522D', bg:'#FBF8F1', dark:'#27231E', text:'#4D433B', accent:'#5C4A6B' },
+      { id:'A', name:'Editorial Plum',  vibe:'Literary & confident',   primary:'#6B4E71', bg:'#F8F6F3', dark:'#221E26', text:'#463F47', accent:'#C97B4A' },
+      { id:'B', name:'Warm Clay',       vibe:'Grounded & approachable', primary:'#8C5A3C', bg:'#FAF7F2', dark:'#2A2521', text:'#4A4038', accent:'#5C7A6E' },
+      { id:'C', name:'Modern Indigo',   vibe:'Sharp & contemporary',    primary:'#3F4A6B', bg:'#F5F6F8', dark:'#1A1D2B', text:'#3A3E4D', accent:'#C9A24A' },
     ],
     fonts: [
-      { id:'A', name:'Literary & Wonky',     vibe:'Distinctive, warm, a little unexpected', heading:'Fraunces',  body:'Instrument Sans', eyebrow:'DM Mono',       gp:'family=Fraunces:opsz,wght@9..144,350&family=Instrument+Sans:wght@400;500&family=DM+Mono' },
-      { id:'B', name:'Editorial & Confident', vibe:'Polished, credentialed, magazine-like', heading:'Libre Baskerville', body:'Source Sans 3', eyebrow:'Space Mono', gp:'family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500&family=Space+Mono' },
-      { id:'C', name:'Modern & Direct',       vibe:'Contemporary, TED-talk energy',         heading:'Syne',      body:'Inter',           eyebrow:'IBM Plex Mono', gp:'family=Syne:wght@700&family=Inter:wght@400;500&family=IBM+Plex+Mono' },
+      { id:'A', name:'Editorial & Classic',  vibe:'Polished, credentialed, magazine-like', heading:'Libre Baskerville', body:'Source Sans 3', eyebrow:'Space Mono', gp:'family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;500&family=Space+Mono' },
+      { id:'B', name:'Warm & Literary',      vibe:'Distinctive, a little unexpected',       heading:'Fraunces',  body:'Inter',           eyebrow:'IBM Plex Mono', gp:'family=Fraunces:opsz,wght@9..144,350&family=Inter:wght@400;500&family=IBM+Plex+Mono' },
+      { id:'C', name:'Modern & Direct',      vibe:'Contemporary, TED-talk energy',          heading:'Syne',      body:'Inter',           eyebrow:'IBM Plex Mono', gp:'family=Syne:wght@700&family=Inter:wght@400;500&family=IBM+Plex+Mono' },
     ],
   },
 };
@@ -1414,10 +1420,25 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
   return<div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 40px':'26px 34px 40px',background:'#FBF8F1'}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
     <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Design preferences</h1>
-    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
-    {preview}
-    {paletteCards}
-    {fontCards}
+    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:20,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
+    <div onClick={()=>setDesign(d=>({...d,ownBranding:!d.ownBranding}))} style={{display:'flex',alignItems:'flex-start',gap:11,padding:'13px 16px',marginBottom:24,background:design.ownBranding?`${bpMeta.color}0e`:'#fff',border:`1px solid ${design.ownBranding?bpMeta.color:'rgba(107,63,42,0.15)'}`,borderRadius:2,cursor:'pointer',transition:'all 0.15s'}}>
+      <input type="checkbox" checked={!!design.ownBranding} onChange={()=>{}} style={{width:15,height:15,accentColor:bpMeta.color,cursor:'pointer',flexShrink:0,marginTop:2}}/>
+      <div>
+        <div style={{fontSize:13.5,fontWeight:500,color:'#27231E',marginBottom:2}}>I already have branding</div>
+        <div style={{fontSize:12.5,color:'#8B7B6F',lineHeight:1.6}}>
+          {design.ownBranding
+            ?'Got it — describe your colors, fonts, and any logo below. The options here will be skipped.'
+            :'I have my own colors, fonts, or logo I\u2019d like to use — skip the picker below and let me describe it.'}
+        </div>
+      </div>
+    </div>
+    {design.ownBranding
+      ?<div style={{marginBottom:8}}>
+          <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>Describe your branding</div>
+          <div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>Colors (hex codes if you have them), fonts, and a note about your logo — or a link to where Victoria can see your brand in use (a book cover, social profile, existing site, etc.).</div>
+          <textarea style={{...st.input,minHeight:110,resize:'vertical',lineHeight:1.6}} value={design.brandingNotes||''} onChange={e=>setDesign(d=>({...d,brandingNotes:e.target.value}))} placeholder={'e.g. Primary color #6B4E71, accent gold #C9A24A. Heading font: Playfair Display. Logo is attached in my project folder.'}/>
+        </div>
+      :<>{preview}{paletteCards}{fontCards}</>}
     <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:8}}>
       <button onClick={onBack} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,cursor:'pointer'}}>← Back</button>
       <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
