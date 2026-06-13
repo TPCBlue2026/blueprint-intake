@@ -1524,13 +1524,13 @@ function LinkGenerator({onBack}){
             {Object.entries(BP_META).map(([k,v])=><option key={k} value={k}>{v.name}</option>)}
           </select>
         </div>
-        <div>
+        {meta.name!=='Speaker Blueprint'&&<div>
           <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
             <option value="emerge">Emerge — $149/mo</option>
             <option value="elevate">Elevate — $349/mo</option>
           </select>
-        </div>
+        </div>}
       </div>
       <div style={{marginBottom:20}}>
         <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Client Google Drive folder link</div>
@@ -1540,7 +1540,7 @@ function LinkGenerator({onBack}){
       <div style={{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:16,marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
           <div style={{width:10,height:10,borderRadius:'50%',background:meta.color,flexShrink:0}}/>
-          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F'}}>{meta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F'}}>{meta.name} · {meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
         </div>
         <div style={{fontSize:12,color:'#27231E',wordBreak:'break-all',lineHeight:1.6,marginBottom:12}}>{link}</div>
         <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(107,63,42,0.06)',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'7px 14px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#8B7B6F',cursor:'pointer',transition:'all 0.15s'}}>
