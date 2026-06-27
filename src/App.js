@@ -1729,7 +1729,7 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
 }
 
 /* ─── Main Intake ────────────────────────────────────────── */
-function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
+function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,onGoToDesign}){
   const ALL=pages.flatMap(p=>p.sections.map(s=>({...s,page:p})));
   const[step,setStep]=useState(0);
   const[data,setData]=useState({});
@@ -1798,6 +1798,19 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design}){
     <div style={{flex:1,display:'flex',overflow:'hidden'}}>
       {/* Sidebar — desktop only */}
       {!isMobile&&<div style={{width:196,background:'#27231E',overflowY:'auto',flexShrink:0,padding:'8px 0 24px'}}>
+        {/* Back to earlier steps */}
+        <div style={{padding:'10px 14px 6px',borderBottom:'1px solid rgba(255,255,255,0.06)',marginBottom:6}}>
+          <button onClick={onGoToProfile} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:'Instrument Sans, sans-serif',fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
+            onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}
+            onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>
+            <span style={{fontSize:9}}>←</span> Business Profile
+          </button>
+          <button onClick={onGoToDesign} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:'Instrument Sans, sans-serif',fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
+            onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}
+            onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>
+            <span style={{fontSize:9}}>←</span> Design Preferences
+          </button>
+        </div>
         {pages.map(pg=>{
           const si=ALL.findIndex(s=>s.page.id===pg.id);
           return<div key={pg.id}>
@@ -1890,7 +1903,7 @@ export default function App(){
       {screen==='landing'&&<LandingPage onStart={()=>setScreen('profile')} driveUrl={driveUrl} bpMeta={bpMeta} tier={tier} onGenerator={()=>setScreen('generator')}/>}
       {screen==='profile'&&<><Header/><div style={{flex:1,overflowY:'auto'}}><ProfileStep profile={profile} setProfile={setProfile} onNext={()=>setScreen('design')} bpMeta={bpMeta}/></div></>}
       {screen==='design'&&<><Header/><div style={{flex:1,overflowY:'auto',display:'flex',flexDirection:'column'}}><DesignStep bpKey={bpKey} bpMeta={bpMeta} design={design} setDesign={setDesign} onNext={()=>setScreen('intake')} onBack={()=>setScreen('profile')}/></div></>}
-      {screen==='intake'&&<Intake profile={profile} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier} design={design}/>}
+      {screen==='intake'&&<Intake profile={profile} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier} design={design} onGoToProfile={()=>setScreen('profile')} onGoToDesign={()=>setScreen('design')}/>}
     </div>
   </>;
 }
