@@ -1647,6 +1647,10 @@ function TourOverlay({bpMeta,onDone,isMobile}){
 
 /* ─── Link Generator ─────────────────────────────────────── */
 function LinkGenerator({onBack}){
+  const PW='101055@PurplePanda';
+  const[unlocked,setUnlocked]=useState(()=>{try{return sessionStorage.getItem('tpc_gen_auth')==='1';}catch(e){return false;}});
+  const[pw,setPw]=useState('');
+  const[err,setErr]=useState(false);
   const[drive,setDrive]=useState('');
   const[bp,setBp]=useState('quote');
   const[tier,setTier]=useState('emerge');
@@ -1657,6 +1661,33 @@ function LinkGenerator({onBack}){
   if(drive)params.set('drive',drive);
   const link=`${base}?${params.toString()}`;
   const copy=()=>{navigator.clipboard.writeText(link).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500);});};
+  const tryUnlock=()=>{
+    if(pw===PW){try{sessionStorage.setItem('tpc_gen_auth','1');}catch(e){}setUnlocked(true);setErr(false);}
+    else{setErr(true);setPw('');}
+  };
+  if(!unlocked)return<div style={{minHeight:'100vh',background:'#27231E',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+    <div style={{background:'#FBF8F1',borderRadius:4,padding:'36px 32px',maxWidth:380,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.4)'}}>
+      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>Victoria only</div>
+      <h2 style={{fontFamily:'Fraunces, serif',fontSize:22,fontWeight:350,color:'#27231E',marginBottom:6}}>Link Generator</h2>
+      <p style={{fontSize:13,color:'#8B7B6F',lineHeight:1.65,marginBottom:24}}>This tool is for Victoria to generate client intake links. Enter the password to continue.</p>
+      <div style={{marginBottom:12}}>
+        <input
+          type="password"
+          value={pw}
+          onChange={e=>{setPw(e.target.value);setErr(false);}}
+          onKeyDown={e=>e.key==='Enter'&&tryUnlock()}
+          placeholder="Password"
+          style={{...st.input,marginBottom:err?8:0,borderColor:err?'#94431C':'rgba(107,63,42,0.15)'}}
+          autoFocus
+        />
+        {err&&<div style={{fontSize:12,color:'#94431C',marginTop:4}}>Incorrect password. Try again.</div>}
+      </div>
+      <button onClick={tryUnlock} style={{background:'#27231E',color:'white',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',width:'100%'}}>
+        Unlock →
+      </button>
+      <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:'Instrument Sans, sans-serif',fontSize:12,color:'#8B7B6F',cursor:'pointer',marginTop:16,display:'block'}}>← Back to client view</button>
+    </div>
+  </div>;
   return<div style={{minHeight:'100vh',background:'#FBF8F1',fontFamily:'Instrument Sans, sans-serif',color:'#4D433B'}}>
     <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
       <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
