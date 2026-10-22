@@ -6,10 +6,10 @@ const FORMSPREE='https://formspree.io/f/xgoqqepp';
 const BP_META = {
   quote:        { name:'Quote Blueprint',        color:'#5B6D4A', cta:'Get a Free Quote',     industry:'local service businesses' },
   consultation: { name:'Consultation Blueprint', color:'#AD6340', cta:'Book a Call',           industry:'coaches, consultants, therapists, advisors' },
-  booking:      { name:'Booking Blueprint',      color:'#1A3A52', cta:'Book an Appointment',  industry:'salons, spas, appointment-based businesses' },
+  booking:      { name:'Booking Blueprint',      color:'#4A8DB5', cta:'Book an Appointment',  industry:'salons, spas, appointment-based businesses' },
   inquiry:      { name:'Inquiry Blueprint',      color:'#7D5E50', cta:'Start Your Inquiry',   industry:'photographers, event vendors, creative businesses' },
   shop:         { name:'Shop Blueprint',         color:'#C98D26', cta:'Shop Now',             industry:'makers, artisans, product-based businesses' },
-  speaker:      { name:'Speaker Blueprint',      color:'#5C4A6B', cta:'Inquire About Booking', industry:'professional speakers, trainers, and workshop facilitators' },
+  speaker:      { name:'Speaker Blueprint',      color:'#9B7DB8', cta:'Inquire About Booking', industry:'professional speakers, trainers, and workshop facilitators' },
 };
 
 function getBlueprintPages(bp, tier) {
@@ -91,18 +91,18 @@ function wc(t){return t?t.trim().split(/\s+/).filter(Boolean).length:0;}
 function wcRange(g){const m=(g||'').match(/\d+/g);return m&&m.length>=2?[+m[0],+m[m.length-1]]:null;}
 
 const st={
-  input:{width:'100%',background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:8,padding:'9px 13px',fontFamily:'Google Sans Flex, Instrument Sans, sans-serif',fontSize:14,color:'#141314',outline:'none',boxSizing:'border-box'},
+  input:{width:'100%',background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:8,padding:'11px 14px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:15,color:'#141314',outline:'none',boxSizing:'border-box'},
   xbtn:{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:8,width:32,height:36,cursor:'pointer',color:'#7A7069',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13},
-  addbtn:{background:'none',border:'1px dashed rgba(20,19,20,0.12)',borderRadius:8,padding:'6px 14px',fontFamily:"DM Mono, monospace",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
+  addbtn:{background:'none',border:'1px dashed rgba(20,19,20,0.12)',borderRadius:8,padding:'6px 14px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:12,letterSpacing:'0.04em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
   card:{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:14,marginBottom:10},
-  cardHd:{fontFamily:"DM Mono, monospace",fontSize:9.5,letterSpacing:'0.08em',textTransform:'uppercase',color:'#7A7069',marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
-  cardLabel:{fontSize:12.5,fontWeight:500,color:'#141314',marginBottom:3,display:'flex',justifyContent:'space-between'},
-  hint:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#7A7069'},
-  wc:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#7A7069',marginTop:3,display:'block'},
+  cardHd:{fontFamily:"'Google Sans Flex', sans-serif",fontSize:11,letterSpacing:'0.04em',textTransform:'uppercase',color:'#7A7069',marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
+  cardLabel:{fontSize:14,fontWeight:500,color:'#141314',marginBottom:3,display:'flex',justifyContent:'space-between'},
+  hint:{fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:'#7A7069'},
+  wc:{fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:'#7A7069',marginTop:3,display:'block'},
 };
 
 const FONTS=`
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=DM+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&display=swap');
 @font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
 @font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap;}
 @font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-ExtraLight.woff2') format('woff2');font-weight:200;font-style:normal;font-display:swap;}
@@ -116,7 +116,7 @@ const INTAKE_CSS=`
   input,textarea,select{font-family:'Google Sans Flex','Instrument Sans',sans-serif;}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--bp-color)!important;}
   ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(20,19,20,0.18);border-radius:2px;}
-  .sb-s{padding:4px 12px 4px 20px;font-size:11.5px;color:rgba(255,255,255,0.38);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.15s;font-family:'Google Sans Flex','Instrument Sans',sans-serif;}
+  .sb-s{padding:5px 12px 5px 20px;font-size:13px;color:rgba(255,255,255,0.45);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.15s;font-family:'Google Sans Flex',sans-serif;}
   .sb-s:hover{color:rgba(255,255,255,0.7);}
   .sb-s.on{color:#fff;border-left-color:var(--bp-color);background:rgba(255,255,255,0.08);}
   .sb-s.dn{color:rgba(255,255,255,0.28);}
@@ -177,7 +177,7 @@ function Field({f,val,onChange,driveUrl,bpColor}){
   if(f.type==='upnote')return<div style={{marginBottom:12}}>
     {driveUrl?<button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpColor||'#5B6D4A',color:'white',border:'none',borderRadius:9999,padding:'10px 18px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>📁 Open my project folder →</button>
     :<div style={{background:'rgba(20,19,20,0.04)',border:'1px dashed rgba(20,19,20,0.16)',borderRadius:12,padding:'12px 16px',fontSize:13,color:'#7A7069',fontStyle:'italic'}}>No project folder linked yet — Victoria will add this before sending your intake link.</div>}
-    <div style={{marginTop:8,fontSize:12,color:'#7A7069',fontFamily:'DM Mono, monospace',letterSpacing:'0.04em'}}>{f.guidance}</div>
+    <div style={{marginTop:8,fontSize:12,color:'#7A7069',fontFamily:"'Google Sans Flex', sans-serif",letterSpacing:'0.04em'}}>{f.guidance}</div>
   </div>;
   return null;
 }
@@ -1523,7 +1523,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
 
   // Palette cards
   const paletteCards=<div style={{marginBottom:32}}>
-    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Color palette</div>
+    <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Color palette</div>
     <p style={{fontSize:13,color:'#7A7069',marginBottom:14}}>Choose the palette that feels most like your brand — or the direction you want to grow into.</p>
     <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.palettes.map(pal=>{
@@ -1539,8 +1539,8 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
             ))}
           </div>
           <div style={{fontSize:12,fontWeight:500,color:'#141314',marginBottom:2}}>{pal.name}</div>
-          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#7A7069',letterSpacing:'0.04em'}}>{pal.vibe}</div>
-          {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
+          <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,color:'#7A7069',letterSpacing:'0.04em'}}>{pal.vibe}</div>
+          {isSel&&<div style={{marginTop:6,fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
         </div>;
       })}
     </div>
@@ -1548,7 +1548,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
 
   // Font cards
   const fontCards=<div style={{marginBottom:32}}>
-    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Font pairing</div>
+    <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Font pairing</div>
     <p style={{fontSize:13,color:'#7A7069',marginBottom:14}}>All three options are curated for {bpMeta.industry}. See how each one feels in the preview above.</p>
     <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.fonts.map(font=>{
@@ -1562,18 +1562,18 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
           <div style={{fontFamily:`'${font.heading}', serif`,fontSize:17,fontWeight:700,color:'#141314',lineHeight:1.2,marginBottom:5}}>{font.heading}</div>
           <div style={{fontFamily:`'${font.body}', sans-serif`,fontSize:11.5,color:'#141314',lineHeight:1.5,marginBottom:8}}>Body text in {font.body}. Clear and readable.</div>
           <div style={{fontSize:11,fontWeight:500,color:'#141314',marginBottom:1}}>{font.name}</div>
-          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#7A7069',letterSpacing:'0.03em'}}>{font.vibe}</div>
-          {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
+          <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,color:'#7A7069',letterSpacing:'0.03em'}}>{font.vibe}</div>
+          {isSel&&<div style={{marginTop:6,fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
         </div>;
       })}
     </div>
   </div>;
 
   return<div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 40px':'26px 34px 40px',background:'#FCF9F5'}}>
-    <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
+    <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
     <h1 style={{fontSize:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:'0 0 4px'}}>
-      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Design </span>
-      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>preferences</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Design </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>preferences</span>
     </h1>
     <p style={{fontSize:13,color:'#7A7069',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
     {preview}
@@ -1635,11 +1635,11 @@ function TourOverlay({bpMeta,onDone,isMobile}){
       {/* Icon */}
       <div className="tour-icon" style={{fontSize:32,textAlign:'center',marginBottom:12}}>{stop.icon}</div>
       {/* Title */}
-      <h2 style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:22,fontWeight:400,color:'#141314',textAlign:'center',marginBottom:10,lineHeight:1.2}}>{stop.title}</h2>
+      <h2 style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:22,fontWeight:400,color:'#141314',textAlign:'center',marginBottom:10,lineHeight:1.2}}>{stop.title}</h2>
       {/* Text */}
       <p style={{fontSize:13.5,color:'#141314',lineHeight:1.7,textAlign:'center',marginBottom:hint?8:20}}>{stop.text}</p>
       {/* Hint */}
-      {hint&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:9.5,color:bpMeta.color,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'center',marginBottom:18}}>{hint}</div>}
+      {hint&&<div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9.5,color:bpMeta.color,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'center',marginBottom:18}}>{hint}</div>}
       {/* Mobile note for sidebar step */}
       {showSidebarNote&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'8px 12px',borderRadius:'0 2px 2px 0',fontSize:12,color:'#141314',marginBottom:14}}>On mobile, use the Back and Next buttons to move between sections — the section indicator below the header shows where you are.</div>}
       {/* Buttons */}
@@ -1652,7 +1652,7 @@ function TourOverlay({bpMeta,onDone,isMobile}){
         </button>
       </div>
       {/* Counter */}
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:9,color:'rgba(20,19,20,0.25)',textAlign:'center',marginTop:14,letterSpacing:'0.06em'}}>{step+1} of {TOUR_STOPS.length}</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,color:'rgba(20,19,20,0.25)',textAlign:'center',marginTop:14,letterSpacing:'0.06em'}}>{step+1} of {TOUR_STOPS.length}</div>
     </div>
   </div>;
 }
@@ -1679,10 +1679,10 @@ function LinkGenerator({onBack}){
   };
   if(!unlocked)return<div style={{minHeight:'100vh',background:'#141314',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
     <div style={{background:'#FCF9F5',borderRadius:16,padding:'36px 32px',maxWidth:380,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.4)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>Victoria only</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>Victoria only</div>
       <h2 style={{fontSize:24,fontWeight:400,color:'#141314',marginBottom:6}}>
-        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Link </span>
-        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>Generator</span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Link </span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>Generator</span>
       </h2>
       <p style={{fontSize:13,color:'#7A7069',lineHeight:1.65,marginBottom:24}}>This tool is for Victoria to generate client intake links. Enter the password to continue.</p>
       <div style={{marginBottom:12}}>
@@ -1705,14 +1705,14 @@ function LinkGenerator({onBack}){
   </div>;
   return<div style={{minHeight:'100vh',background:'#FCF9F5',fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>
     <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
-      <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#C98D26',background:'rgba(201,141,38,0.2)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase'}}>Link Generator · Victoria</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'#C98D26',background:'rgba(201,141,38,0.2)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase'}}>Link Generator · Victoria</span>
     </div>
     <div style={{maxWidth:560,margin:'0 auto',padding:'48px 24px'}}>
-      <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>For Victoria only</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>For Victoria only</div>
       <h1 style={{fontSize:28,fontWeight:400,color:'#141314',marginBottom:8}}>
-        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Generate a client </span>
-        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>intake link</span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Generate a client </span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>intake link</span>
       </h1>
       <p style={{fontSize:14,color:'#7A7069',lineHeight:1.7,marginBottom:32}}>Select the blueprint and tier, paste the client's Drive folder link, and copy the URL for their welcome email.</p>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
@@ -1730,7 +1730,7 @@ function LinkGenerator({onBack}){
           </select>
         </div>}
         {bp==='speaker'&&<div style={{background:`${meta.color}0e`,border:`1px solid ${meta.color}33`,borderRadius:12,padding:'10px 14px',display:'flex',alignItems:'center'}}>
-          <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:meta.color}}>Flat Rate — $1,000</span>
+          <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:meta.color}}>Flat Rate — $1,000</span>
         </div>}
       </div>
       <div style={{marginBottom:20}}>
@@ -1741,15 +1741,15 @@ function LinkGenerator({onBack}){
       <div style={{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:16,marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
           <div style={{width:10,height:10,borderRadius:'50%',background:meta.color,flexShrink:0}}/>
-          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#7A7069'}}>{meta.name} · {meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+          <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#7A7069'}}>{meta.name} · {meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
         </div>
         <div style={{fontSize:12,color:'#141314',wordBreak:'break-all',lineHeight:1.6,marginBottom:12}}>{link}</div>
-        <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(20,19,20,0.04)',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'7px 14px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#7A7069',cursor:'pointer',transition:'all 0.15s'}}>
+        <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(20,19,20,0.04)',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'7px 14px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#7A7069',cursor:'pointer',transition:'all 0.15s'}}>
           {copied?'✓ Copied!':'Copy link'}
         </button>
       </div>
       <div style={{background:'rgba(91,109,74,0.06)',borderLeft:'2px solid #5B6D4A',borderRadius:'0 2px 2px 0',padding:'12px 16px',fontSize:13,color:'#141314',lineHeight:1.65,marginBottom:32}}>
-        <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#5B6D4A',marginBottom:4}}>How to use</div>
+        <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#5B6D4A',marginBottom:4}}>How to use</div>
         Select the blueprint and tier from the discovery call. Paste the client's Drive folder link. Copy the URL and paste into their welcome email. The intake loads pre-configured for their build.
       </div>
       <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:'#7A7069',cursor:'pointer'}}>← Back</button>
@@ -1779,19 +1779,19 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
   ];
   return<div style={{minHeight:'100vh',background:'#FCF9F5',fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>
     <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
-      <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.9)',background:'rgba(255,255,255,0.12)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.04em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
     </div>
     <div style={{maxWidth:600,margin:'0 auto',padding:'36px 18px 60px'}}>
-      <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:10}}>Your website starts here</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:10}}>Your website starts here</div>
       <h1 style={{fontSize:38,fontWeight:400,color:'#141314',lineHeight:1.2,marginBottom:16,letterSpacing:'-0.01em'}}>
-        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Let's build your site.</span><br/>
-        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>Start with your content.</span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Let's build your site.</span><br/>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>Start with your content.</span>
       </h1>
       <p style={{fontSize:16,color:'#141314',lineHeight:1.7,marginBottom:12}}>This intake walks you through every section of your {bpMeta.name} — one at a time, in the same order your site is built. For each section you will find clear guidance on what to write, how long it should be, and why it matters.</p>
       <p style={{fontSize:16,color:'#141314',lineHeight:1.7,marginBottom:32}}>When you submit, Victoria receives everything organized and ready to build from. Most clients finish in <strong>{timeEstimate}</strong>.</p>
       <div style={{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:20,marginBottom:32}}>
-        <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Before you start — have these ready</div>
+        <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Before you start — have these ready</div>
         {checklist.map((item,i)=><div key={i} style={{display:'flex',gap:12,marginBottom:10,fontSize:13.5,color:'#141314',lineHeight:1.5}}>
           <div style={{width:20,height:20,background:`${bpMeta.color}18`,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:11,color:bpMeta.color,fontWeight:500,marginTop:1}}>{i+1}</div>
           {item}
@@ -1799,7 +1799,7 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
       </div>
       {driveUrl&&<div style={{background:`${bpMeta.color}0e`,border:`1px solid ${bpMeta.color}33`,borderRadius:12,padding:16,marginBottom:28,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
         <div>
-          <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:3}}>Your project folder</div>
+          <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:3}}>Your project folder</div>
           <div style={{fontSize:13,color:'#141314'}}>Upload your photos and files here as you go through the intake.</div>
         </div>
         <button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'10px 22px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,fontWeight:500,cursor:'pointer',flexShrink:0}}>
@@ -1807,14 +1807,14 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
         </button>
       </div>}
       <div style={{background:'#141314',borderRadius:12,padding:'16px 20px',marginBottom:32,fontSize:13,color:'rgba(255,255,255,0.65)',lineHeight:1.7}}>
-        <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>AI writing prompts</span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>AI writing prompts</span>
         Each section includes an AI writing prompt pre-loaded with your business info. If you get stuck, expand the prompt, copy it, and paste it into Claude or ChatGPT for a strong first draft — then make it yours.
       </div>
-      <button className="lp-btn" onClick={onStart} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'15px 36px',fontFamily:"'Just Serif', Georgia, serif",fontSize:18,fontWeight:400,cursor:'pointer',letterSpacing:'0.01em',transition:'all 0.15s',display:'inline-flex',alignItems:'center',gap:10}}>
+      <button className="lp-btn" onClick={onStart} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'15px 36px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:18,fontWeight:400,cursor:'pointer',letterSpacing:'0.01em',transition:'all 0.15s',display:'inline-flex',alignItems:'center',gap:10}}>
         Start my intake →
       </button>
       <div style={{marginTop:40,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.12)'}}>
-        <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:'#7A7069',marginBottom:8}}>For Victoria</div>
+        <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:'#7A7069',marginBottom:8}}>For Victoria</div>
         <button onClick={onGenerator} style={{background:'none',border:'none',padding:0,fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:bpMeta.color,cursor:'pointer',textDecoration:'underline',textUnderlineOffset:3}}>Generate a client intake link →</button>
       </div>
     </div>
@@ -1833,14 +1833,14 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
     <input style={st.input} value={profile[key]||''} onChange={e=>upd(key,e.target.value)} placeholder={ph}/>
   </div>;
   return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FCF9F5'}}>
-    <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 01 of 03</div>
+    <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 01 of 03</div>
     <h1 style={{fontSize:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:'0 0 4px'}}>
-      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Business </span>
-      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>profile</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Business </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>profile</span>
     </h1>
     <p style={{fontSize:13,color:'#7A7069',marginBottom:20}}>Pre-fills every AI writing prompt so your drafts sound like you, not a template.</p>
     <div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:24,fontSize:13,lineHeight:1.65,color:'#141314'}}>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>How this is used</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>How this is used</span>
       Everything here stays in this session only. It personalizes the AI prompts so generated copy reflects your actual business.
     </div>
     {pf(bpMeta.name==='Speaker Blueprint'?'Your name':'Business name','biz',bpMeta.name==='Speaker Blueprint'?'e.g. Dr. Sabrina Jackson':'e.g. Austin Greenworks · Naomi Crawford Photography',null)}
@@ -1863,27 +1863,27 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
 
     {/* ── Contact details ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Contact details</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Contact details</div>
       {pf('Business email address','email','e.g. hello@yourbusiness.com','This will be used for site contact forms and is not shared with anyone.')}
       {pf('Business phone number (optional)','phone','e.g. (512) 555-0123',null)}
       {pf('Business address (if brick and mortar or service area)','address','e.g. 123 Main St, Austin TX 78701 · or · Serving all of Metro Detroit',null)}
     </div>
     {/* ── Online presence ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Online presence</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Online presence</div>
       {pf('Existing website URL (if you have one)','existingUrl','e.g. https://www.yoursite.com · or · None',null)}
       {pf('Any other online presence','otherLinks','e.g. Linktree, Etsy shop, Google Business Profile — paste links separated by commas',null)}
     </div>
     {/* ── Existing brand ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Existing brand (if you have one)</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Existing brand (if you have one)</div>
       <p style={{fontSize:12,color:'#7A7069',marginBottom:14,lineHeight:1.6}}>If you already have brand colors and fonts, enter them here. If you are starting fresh, leave these blank — you will choose your palette and font pairing on the next step.</p>
       {pf('Existing brand colors (hex codes)','existingColors','e.g. #2C4A3E, #F5F0E8, #C4956A · or · None yet — I\'ll choose on the next step',null)}
       {pf('Existing brand fonts (if you know them)','existingFonts','e.g. Playfair Display for headings, Lato for body · or · None yet',null)}
     </div>
     {/* ── Inspiration ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Design inspiration</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Design inspiration</div>
       <div style={{marginBottom:20}}>
         <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4}}>Websites you love the look or feel of</div>
         <div style={{fontSize:12,color:'#7A7069',marginBottom:6}}>Paste URLs if possible — can be any industry, not just yours.</div>
@@ -1897,7 +1897,7 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
     </div>
     {/* ── Privacy policy ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Privacy policy</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Privacy policy</div>
       <div style={{background:'rgba(20,19,20,0.04)',borderLeft:'2px solid rgba(20,19,20,0.16)',padding:'10px 14px',marginBottom:14,fontSize:12.5,color:'#141314',lineHeight:1.7}}>
         Because your site will collect visitor information through forms, a privacy policy is a legal requirement. The Pier Collective offers Termageddon — an auto-updating privacy policy service that keeps you covered as laws change. Setup is $49 + $129/year, and we handle everything.
       </div>
@@ -1910,7 +1910,7 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
     </div>
     {/* ── Anything else ── */}
     <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)',marginBottom:28}}>
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Anything else?</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Anything else?</div>
       <div style={{fontSize:12,color:'#7A7069',marginBottom:8}}>Anything else you would like Victoria to know about your business or your vision for the site.</div>
       <textarea style={{...st.input,minHeight:80,resize:'vertical',lineHeight:1.6}} value={profile.anythingElse||''} onChange={e=>upd('anythingElse',e.target.value)} placeholder={'e.g. I want the site to feel very different from competitors in my area. I also have a launch date in mind — April 1st.'}/>
     </div>
@@ -1963,12 +1963,12 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
   if(submitted)return<div style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#FCF9F5',textAlign:'center',padding:40}}>
     <div style={{width:52,height:52,background:bpMeta.color,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16,fontSize:22,color:'white'}}>✓</div>
     <h1 style={{fontSize:32,fontWeight:400,color:'#141314',marginBottom:8}}>
-      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Content </span>
-      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>submitted</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif"}}>Content </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>submitted</span>
     </h1>
     <p style={{fontSize:14,color:'#7A7069',lineHeight:1.7,maxWidth:380,marginBottom:24}}>Your content is on its way to Victoria. She will review everything and be in touch within 2 business days. Your site will be live within two weeks of receiving complete content.</p>
     <div style={{padding:'14px 20px',background:`${bpMeta.color}0e`,borderRadius:12,borderLeft:`2px solid ${bpMeta.color}`,fontSize:13,color:'#141314',maxWidth:380,textAlign:'left'}}>
-      <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>What happens next</div>
+      <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>What happens next</div>
       Victoria reviews your content and follows up with any clarifying questions. Once confirmed, your build begins.
     </div>
   </div>;
@@ -1977,18 +1977,18 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
     {showTour&&<TourOverlay bpMeta={bpMeta} onDone={dismissTour} isMobile={isMobile}/>}
     {/* Top header bar */}
     <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 14px':'0 20px',flexShrink:0}}>
-      {!isMobile&&<span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
-      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
+      {!isMobile&&<span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.9)',background:'rgba(255,255,255,0.12)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.04em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
       <div style={{flex:1,height:3,background:'rgba(255,255,255,0.1)',borderRadius:2,overflow:'hidden'}}>
         <div style={{height:'100%',background:bpMeta.color,width:pct+'%',transition:'width 0.4s ease'}}/>
       </div>
-      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'rgba(255,255,255,0.35)',flexShrink:0}}>{done.size}/{total}</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.35)',flexShrink:0}}>{done.size}/{total}</span>
       {isMobile&&<button onClick={()=>setShowTour(true)} style={{background:'none',border:'none',color:'rgba(255,255,255,0.4)',fontSize:16,cursor:'pointer',padding:'0 4px',flexShrink:0}} title="Show tour">?</button>}
     </div>
     {/* Mobile section indicator */}
     {isMobile&&<div style={{background:'#0d0c0d',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'7px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
-      <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)'}}>{cur.page.name}</span>
-      <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.06em',color:bpMeta.color}}>{cur.name.replace(' [Elevate]','').replace(' [New]','').substring(0,32)}</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)'}}>{cur.page.name}</span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:11,letterSpacing:'0.02em',color:'rgba(255,255,255,0.55)'}}>{cur.name.replace(' [Elevate]','').replace(' [New]','').substring(0,32)}</span>
     </div>}
     <div style={{flex:1,display:'flex',overflow:'hidden'}}>
       {/* Sidebar — desktop only */}
@@ -2009,7 +2009,7 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
         {pages.map(pg=>{
           const si=ALL.findIndex(s=>s.page.id===pg.id);
           return<div key={pg.id}>
-            <div onClick={()=>jump(si)} style={{padding:'8px 14px 5px',fontFamily:'DM Mono, monospace',fontSize:9.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'flex',alignItems:'center',gap:6,cursor:'pointer',userSelect:'none'}}>
+            <div onClick={()=>jump(si)} style={{padding:'8px 14px 5px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:9.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'flex',alignItems:'center',gap:6,cursor:'pointer',userSelect:'none'}}>
               <span style={{fontSize:8.5,background:'rgba(255,255,255,0.07)',borderRadius:12,padding:'1px 5px'}}>{pg.num}</span>
               {pg.name}
               {pg.tag&&<span style={{fontSize:8,color:bpMeta.color,opacity:0.7}}>E</span>}
@@ -2027,31 +2027,31 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
       </div>}
       {/* Main content area */}
       <div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 100px':'26px 34px 40px',background:'#FCF9F5'}}>
-        {!isMobile&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
+        {!isMobile&&<div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
           Page {cur.page.num} — {cur.page.name}
         </div>}
-        <h1 style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:isMobile?22:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:isMobile?'6px 0 2px':'4px 0 2px'}}>
+        <h1 style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?22:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:isMobile?'6px 0 2px':'4px 0 2px'}}>
           {cur.name.replace(' [Elevate]','').replace(' [New]','')}
           {cur.tag&&<span style={{fontSize:12,fontWeight:400,color:bpMeta.color,marginLeft:8,fontFamily:"'Google Sans Flex', sans-serif"}}>{cur.tag}</span>}
         </h1>
         {cur.sub&&<p style={{fontSize:13,color:'#7A7069',marginBottom:16}}>{cur.sub}</p>}
         {cur.why&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:22,fontSize:13,lineHeight:1.65,color:'#141314'}}>
-          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>Why it matters</span>
+          <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>Why it matters</span>
           {cur.why}
         </div>}
         {cur.fields.map(f=><div key={f.id} style={{marginBottom:20}}>
           <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <span>{f.label}</span>
-            {f.guidance&&(f.type==='text'||f.type==='sel'||f.type==='checks')&&<span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#7A7069'}}>{f.guidance}</span>}
+            {f.guidance&&(f.type==='text'||f.type==='sel'||f.type==='checks')&&<span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'#7A7069'}}>{f.guidance}</span>}
           </div>
           <Field f={f} val={get(cur.id,f.id,f.type==='checks'||f.type==='cards'||f.type==='rep'?[]:'')} onChange={v=>setField(cur.id,f.id,v)} driveUrl={driveUrl} bpColor={bpMeta.color}/>
         </div>)}
         {promptText&&<div style={{marginTop:4}}>
-          <button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
+          <button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
             ✦ AI writing prompt {ai?'↑':'↓'}
           </button>
           {ai&&<div style={{background:'#141314',borderRadius:12,padding:14,marginTop:9}}>
-            <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',marginBottom:7}}>Copy, fill in any bracketed details, paste into Claude or ChatGPT</div>
+            <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',marginBottom:7}}>Copy, fill in any bracketed details, paste into Claude or ChatGPT</div>
             <div style={{fontSize:12,color:'rgba(255,255,255,0.75)',lineHeight:1.75,fontStyle:'italic',whiteSpace:'pre-wrap'}}>{promptText}</div>
           </div>}
         </div>}
@@ -2060,7 +2060,7 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
     </div>
     <div style={{height:isMobile?64:60,background:'#fff',borderTop:'1px solid rgba(20,19,20,0.12)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'0 16px':'0 34px',flexShrink:0,position:isMobile?'sticky':'static',bottom:0,zIndex:10}}>
       <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#141314',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
-      {!isMobile&&<span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'#7A7069'}}>{cur.page.name}</span>}
+      {!isMobile&&<span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'#7A7069'}}>{cur.page.name}</span>}
       {step<total-1
         ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
         :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#7A7069':bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 14px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
@@ -2086,8 +2086,8 @@ export default function App(){
   },[]);
 
   const Header=()=><div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 20px',flexShrink:0}}>
-    <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-    <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+    <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+    <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.9)',background:'rgba(255,255,255,0.12)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.04em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
   </div>;
 
   if(screen==='generator')return<><style>{FONTS+INTAKE_CSS}</style><LinkGenerator onBack={()=>setScreen('landing')}/></>;
