@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const D='#27231E',BG='#FBF8F1',TX='#4D433B',MU='#8B7B6F',BO='rgba(107,63,42,0.15)';
+const D='#141314',BG='#FCF9F5',TX='#141314',MU='#7A7069',BO='rgba(20,19,20,0.12)';
 const FORMSPREE='https://formspree.io/f/xgoqqepp';
 
 const BP_META = {
@@ -91,29 +91,38 @@ function wc(t){return t?t.trim().split(/\s+/).filter(Boolean).length:0;}
 function wcRange(g){const m=(g||'').match(/\d+/g);return m&&m.length>=2?[+m[0],+m[m.length-1]]:null;}
 
 const st={
-  input:{width:'100%',background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 11px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,color:'#27231E',outline:'none',boxSizing:'border-box'},
-  xbtn:{background:'none',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,width:32,height:34,cursor:'pointer',color:'#8B7B6F',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13},
-  addbtn:{background:'none',border:'1px dashed rgba(107,63,42,0.15)',borderRadius:2,padding:'6px 12px',fontFamily:"DM Mono, monospace",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#8B7B6F',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
-  card:{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:13,marginBottom:9},
-  cardHd:{fontFamily:"DM Mono, monospace",fontSize:9.5,letterSpacing:'0.08em',textTransform:'uppercase',color:'#8B7B6F',marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
-  cardLabel:{fontSize:12,fontWeight:500,color:'#4D433B',marginBottom:3,display:'flex',justifyContent:'space-between'},
-  hint:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#8B7B6F'},
-  wc:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#8B7B6F',marginTop:3,display:'block'},
+  input:{width:'100%',background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:8,padding:'9px 13px',fontFamily:'Google Sans Flex, Instrument Sans, sans-serif',fontSize:14,color:'#141314',outline:'none',boxSizing:'border-box'},
+  xbtn:{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:8,width:32,height:36,cursor:'pointer',color:'#7A7069',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13},
+  addbtn:{background:'none',border:'1px dashed rgba(20,19,20,0.12)',borderRadius:8,padding:'6px 14px',fontFamily:"DM Mono, monospace",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,marginTop:4},
+  card:{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:14,marginBottom:10},
+  cardHd:{fontFamily:"DM Mono, monospace",fontSize:9.5,letterSpacing:'0.08em',textTransform:'uppercase',color:'#7A7069',marginBottom:9,display:'flex',justifyContent:'space-between',alignItems:'center'},
+  cardLabel:{fontSize:12.5,fontWeight:500,color:'#141314',marginBottom:3,display:'flex',justifyContent:'space-between'},
+  hint:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#7A7069'},
+  wc:{fontFamily:"DM Mono, monospace",fontSize:10,color:'#7A7069',marginTop:3,display:'block'},
 };
 
-const FONTS=`@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,350&family=Instrument+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap');`;
+const FONTS=`
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&family=DM+Mono:wght@400&display=swap');
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Light.woff2') format('woff2');font-weight:300;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-ExtraLight.woff2') format('woff2');font-weight:200;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;}
+@font-face{font-family:'Just Serif';src:url('/fonts/JUSTSerif-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap;}
+`;
 const INTAKE_CSS=`
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Instrument Sans',sans-serif;}
-  input,textarea,select{font-family:'Instrument Sans',sans-serif;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Google Sans Flex','Instrument Sans',sans-serif;}
+  input,textarea,select{font-family:'Google Sans Flex','Instrument Sans',sans-serif;}
   input:focus,textarea:focus,select:focus{outline:none;border-color:var(--bp-color)!important;}
-  ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(107,63,42,0.2);border-radius:2px;}
-  .sb-s{padding:4px 12px 4px 20px;font-size:11.5px;color:rgba(255,255,255,0.38);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.15s;font-family:'Instrument Sans',sans-serif;}
+  ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(20,19,20,0.18);border-radius:2px;}
+  .sb-s{padding:4px 12px 4px 20px;font-size:11.5px;color:rgba(255,255,255,0.38);cursor:pointer;display:flex;align-items:center;gap:7px;border-left:2px solid transparent;transition:all 0.15s;font-family:'Google Sans Flex','Instrument Sans',sans-serif;}
   .sb-s:hover{color:rgba(255,255,255,0.7);}
   .sb-s.on{color:#fff;border-left-color:var(--bp-color);background:rgba(255,255,255,0.08);}
   .sb-s.dn{color:rgba(255,255,255,0.28);}
   .addbtn:hover{border-color:var(--bp-color)!important;color:var(--bp-color)!important;}
-  .ai-btn:hover{border-color:#94431C!important;color:#94431C!important;}
-  .lp-btn:hover{filter:brightness(1.12);}
+  .ai-btn:hover{border-color:#3041F0!important;color:#3041F0!important;}
+  .lp-btn:hover{filter:brightness(1.08);}
   .tour-next:hover{filter:brightness(1.1);}
   @keyframes tourPulse{0%{opacity:1;}50%{opacity:0.7;}100%{opacity:1;}}
   .tour-icon{animation:tourPulse 2s ease infinite;}
@@ -123,7 +132,7 @@ function WC({text,guidance}){
   const c=wc(text||''),r=wcRange(guidance||'');
   if(!r)return<span style={st.wc}>{c} words</span>;
   const[mn,mx]=r;
-  return<span style={{...st.wc,color:c>=mn&&c<=mx?'#5B6D4A':c>mx?'#94431C':'#8B7B6F'}}>{c} / {guidance}</span>;
+  return<span style={{...st.wc,color:c>=mn&&c<=mx?'#5B6D4A':c>mx?'#3041F0':'#7A7069'}}>{c} / {guidance}</span>;
 }
 
 function Repeater({value=[],onChange,ph,min=1,max=5}){
@@ -163,12 +172,12 @@ function Field({f,val,onChange,driveUrl,bpColor}){
   if(f.type==='textarea')return<><textarea style={{...st.input,minHeight:88,resize:'vertical',lineHeight:1.6}} value={val||''} onChange={e=>onChange(e.target.value)} placeholder={f.ph}/>{f.guidance&&f.guidance!=='Optional'&&<WC text={val||''} guidance={f.guidance}/>}</>;
   if(f.type==='rep')return<Repeater value={val} onChange={onChange} ph={f.ph} min={f.min||1} max={f.max||8}/>;
   if(f.type==='cards')return<Cards value={val} onChange={onChange} subs={f.subs} min={f.min||1} max={f.max||5} lbl={f.lbl||'Item'}/>;
-  if(f.type==='checks')return<div>{f.options.map(o=>{const chk=(val||[]).includes(o);return<label key={o} style={{display:'flex',alignItems:'center',gap:9,marginBottom:9,fontSize:13.5,cursor:'pointer',color:'#4D433B'}}><input type="checkbox" checked={chk} style={{width:14,height:14,accentColor:bpColor||'#5B6D4A',cursor:'pointer',flexShrink:0}} onChange={()=>onChange(chk?(val||[]).filter(x=>x!==o):[...(val||[]),o])}/>{o}</label>})}</div>;
+  if(f.type==='checks')return<div>{f.options.map(o=>{const chk=(val||[]).includes(o);return<label key={o} style={{display:'flex',alignItems:'center',gap:9,marginBottom:9,fontSize:13.5,cursor:'pointer',color:'#141314'}}><input type="checkbox" checked={chk} style={{width:14,height:14,accentColor:bpColor||'#5B6D4A',cursor:'pointer',flexShrink:0}} onChange={()=>onChange(chk?(val||[]).filter(x=>x!==o):[...(val||[]),o])}/>{o}</label>})}</div>;
   if(f.type==='sel')return<select style={{...st.input,cursor:'pointer'}} value={val||''} onChange={e=>onChange(e.target.value)}><option value="">Select one</option>{f.options.map(o=><option key={o} value={o}>{o}</option>)}</select>;
   if(f.type==='upnote')return<div style={{marginBottom:12}}>
-    {driveUrl?<button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpColor||'#5B6D4A',color:'white',border:'none',borderRadius:2,padding:'10px 18px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>📁 Open my project folder →</button>
-    :<div style={{background:'rgba(107,63,42,0.06)',border:'1px dashed rgba(107,63,42,0.2)',borderRadius:2,padding:'12px 16px',fontSize:13,color:'#8B7B6F',fontStyle:'italic'}}>No project folder linked yet — Victoria will add this before sending your intake link.</div>}
-    <div style={{marginTop:8,fontSize:12,color:'#8B7B6F',fontFamily:'DM Mono, monospace',letterSpacing:'0.04em'}}>{f.guidance}</div>
+    {driveUrl?<button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpColor||'#5B6D4A',color:'white',border:'none',borderRadius:9999,padding:'10px 18px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:8}}>📁 Open my project folder →</button>
+    :<div style={{background:'rgba(20,19,20,0.04)',border:'1px dashed rgba(20,19,20,0.16)',borderRadius:12,padding:'12px 16px',fontSize:13,color:'#7A7069',fontStyle:'italic'}}>No project folder linked yet — Victoria will add this before sending your intake link.</div>}
+    <div style={{marginTop:8,fontSize:12,color:'#7A7069',fontFamily:'DM Mono, monospace',letterSpacing:'0.04em'}}>{f.guidance}</div>
   </div>;
   return null;
 }
@@ -1484,7 +1493,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
 
   // Live preview card
   const preview=<div style={{
-    background:selPal.bg,border:`1px solid ${selPal.accent}33`,borderRadius:4,
+    background:selPal.bg,border:`1px solid ${selPal.accent}33`,borderRadius:16,
     padding:'28px 32px',marginBottom:32,transition:'all 0.3s ease',
     boxShadow:`0 2px 20px ${selPal.dark}10`,
   }}>
@@ -1498,7 +1507,7 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
       Every detail of your site is designed around how your business actually converts visitors into clients — so it works while you focus on the work.
     </div>
     <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-      <button style={{background:selPal.primary,color:selPal.bg,border:'none',borderRadius:2,padding:'9px 20px',fontFamily:`'${selFont.body}', sans-serif`,fontSize:13,fontWeight:500,cursor:'default',transition:'all 0.3s'}}>{bpMeta.cta}</button>
+      <button style={{background:selPal.primary,color:selPal.bg,border:'none',borderRadius:9999,padding:'9px 20px',fontFamily:`'${selFont.body}', sans-serif`,fontSize:13,fontWeight:500,cursor:'default',transition:'all 0.3s'}}>{bpMeta.cta}</button>
       <div style={{display:'flex',gap:6}}>
         {[selPal.primary,selPal.bg,selPal.dark,selPal.text,selPal.accent].map((c,i)=>(
           <div key={i} style={{width:18,height:18,borderRadius:'50%',background:c,border:`1px solid ${selPal.dark}20`,transition:'background 0.3s'}}/>
@@ -1515,22 +1524,22 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
   // Palette cards
   const paletteCards=<div style={{marginBottom:32}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Color palette</div>
-    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>Choose the palette that feels most like your brand — or the direction you want to grow into.</p>
+    <p style={{fontSize:13,color:'#7A7069',marginBottom:14}}>Choose the palette that feels most like your brand — or the direction you want to grow into.</p>
     <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.palettes.map(pal=>{
         const isSel=design.paletteId===pal.id||((!design.paletteId)&&pal.id==='A');
         return<div key={pal.id} onClick={()=>setPal(pal.id)} style={{
-          border:`2px solid ${isSel?bpMeta.color:'rgba(107,63,42,0.15)'}`,
-          borderRadius:4,padding:12,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
+          border:`2px solid ${isSel?bpMeta.color:'rgba(20,19,20,0.12)'}`,
+          borderRadius:16,padding:12,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
           transition:'all 0.15s',
         }}>
           <div style={{display:'flex',gap:5,marginBottom:9}}>
             {[pal.primary,pal.bg,pal.dark,pal.text,pal.accent].map((c,i)=>(
-              <div key={i} style={{flex:1,height:22,borderRadius:2,background:c,border:'1px solid rgba(0,0,0,0.06)'}}/>
+              <div key={i} style={{flex:1,height:22,borderRadius:3,background:c,border:'1px solid rgba(0,0,0,0.06)'}}/>
             ))}
           </div>
-          <div style={{fontSize:12,fontWeight:500,color:'#27231E',marginBottom:2}}>{pal.name}</div>
-          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#8B7B6F',letterSpacing:'0.04em'}}>{pal.vibe}</div>
+          <div style={{fontSize:12,fontWeight:500,color:'#141314',marginBottom:2}}>{pal.name}</div>
+          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#7A7069',letterSpacing:'0.04em'}}>{pal.vibe}</div>
           {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
         </div>;
       })}
@@ -1540,36 +1549,39 @@ function DesignStep({bpKey,bpMeta,design,setDesign,onNext,onBack}){
   // Font cards
   const fontCards=<div style={{marginBottom:32}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Font pairing</div>
-    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:14}}>All three options are curated for {bpMeta.industry}. See how each one feels in the preview above.</p>
+    <p style={{fontSize:13,color:'#7A7069',marginBottom:14}}>All three options are curated for {bpMeta.industry}. See how each one feels in the preview above.</p>
     <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:12}}>
       {dd.fonts.map(font=>{
         const isSel=design.fontId===font.id||((!design.fontId)&&font.id==='A');
         return<div key={font.id} onClick={()=>setFont(font.id)} style={{
-          border:`2px solid ${isSel?bpMeta.color:'rgba(107,63,42,0.15)'}`,
-          borderRadius:4,padding:14,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
+          border:`2px solid ${isSel?bpMeta.color:'rgba(20,19,20,0.12)'}`,
+          borderRadius:16,padding:14,cursor:'pointer',background:isSel?`${bpMeta.color}06`:'#fff',
           transition:'all 0.15s',
         }}>
-          <div style={{fontFamily:`'${font.eyebrow}', monospace`,fontSize:8.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F',marginBottom:5}}>{font.eyebrow}</div>
-          <div style={{fontFamily:`'${font.heading}', serif`,fontSize:17,fontWeight:700,color:'#27231E',lineHeight:1.2,marginBottom:5}}>{font.heading}</div>
-          <div style={{fontFamily:`'${font.body}', sans-serif`,fontSize:11.5,color:'#4D433B',lineHeight:1.5,marginBottom:8}}>Body text in {font.body}. Clear and readable.</div>
-          <div style={{fontSize:11,fontWeight:500,color:'#27231E',marginBottom:1}}>{font.name}</div>
-          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#8B7B6F',letterSpacing:'0.03em'}}>{font.vibe}</div>
+          <div style={{fontFamily:`'${font.eyebrow}', monospace`,fontSize:8.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'#7A7069',marginBottom:5}}>{font.eyebrow}</div>
+          <div style={{fontFamily:`'${font.heading}', serif`,fontSize:17,fontWeight:700,color:'#141314',lineHeight:1.2,marginBottom:5}}>{font.heading}</div>
+          <div style={{fontFamily:`'${font.body}', sans-serif`,fontSize:11.5,color:'#141314',lineHeight:1.5,marginBottom:8}}>Body text in {font.body}. Clear and readable.</div>
+          <div style={{fontSize:11,fontWeight:500,color:'#141314',marginBottom:1}}>{font.name}</div>
+          <div style={{fontFamily:"'DM Mono', monospace",fontSize:9,color:'#7A7069',letterSpacing:'0.03em'}}>{font.vibe}</div>
           {isSel&&<div style={{marginTop:6,fontFamily:"'DM Mono', monospace",fontSize:9,color:bpMeta.color,letterSpacing:'0.06em',textTransform:'uppercase'}}>✓ Selected</div>}
         </div>;
       })}
     </div>
   </div>;
 
-  return<div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 40px':'26px 34px 40px',background:'#FBF8F1'}}>
+  return<div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 40px':'26px 34px 40px',background:'#FCF9F5'}}>
     <div style={{fontFamily:"'DM Mono', monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 02 of 03</div>
-    <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Design preferences</h1>
-    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
+    <h1 style={{fontSize:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:'0 0 4px'}}>
+      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Design </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>preferences</span>
+    </h1>
+    <p style={{fontSize:13,color:'#7A7069',marginBottom:24,lineHeight:1.6}}>Choose a color palette and font pairing. The preview above updates live as you select. You can always change these — this just gives Victoria a strong starting point for your build.</p>
     {preview}
     {paletteCards}
     {fontCards}
     <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:8}}>
-      <button onClick={onBack} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,cursor:'pointer'}}>← Back</button>
-      <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
+      <button onClick={onBack} style={{background:'none',color:'#141314',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'10px 24px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,cursor:'pointer'}}>← Back</button>
+      <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:'12px 28px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
         Start content intake →
       </button>
     </div>
@@ -1610,37 +1622,37 @@ function TourOverlay({bpMeta,onDone,isMobile}){
     display:'flex',alignItems:'center',justifyContent:'center',padding:20,
   }}>
     <div style={{
-      background:'#FBF8F1',borderRadius:4,padding:'28px 28px 24px',
+      background:'#FCF9F5',borderRadius:16,padding:'28px 28px 24px',
       maxWidth:400,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.35)',
       position:'relative',
     }}>
       {/* Step dots */}
       <div style={{display:'flex',gap:5,marginBottom:20,justifyContent:'center'}}>
         {TOUR_STOPS.map((_,i)=>(
-          <div key={i} style={{width:i===step?18:6,height:6,borderRadius:3,background:i===step?bpMeta.color:i<step?`${bpMeta.color}55`:'rgba(107,63,42,0.15)',transition:'all 0.3s'}}/>
+          <div key={i} style={{width:i===step?18:6,height:6,borderRadius:3,background:i===step?bpMeta.color:i<step?`${bpMeta.color}55`:'rgba(20,19,20,0.12)',transition:'all 0.3s'}}/>
         ))}
       </div>
       {/* Icon */}
       <div className="tour-icon" style={{fontSize:32,textAlign:'center',marginBottom:12}}>{stop.icon}</div>
       {/* Title */}
-      <h2 style={{fontFamily:'Fraunces, serif',fontSize:20,fontWeight:350,color:'#27231E',textAlign:'center',marginBottom:10,lineHeight:1.2}}>{stop.title}</h2>
+      <h2 style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:22,fontWeight:400,color:'#141314',textAlign:'center',marginBottom:10,lineHeight:1.2}}>{stop.title}</h2>
       {/* Text */}
-      <p style={{fontSize:13.5,color:'#4D433B',lineHeight:1.7,textAlign:'center',marginBottom:hint?8:20}}>{stop.text}</p>
+      <p style={{fontSize:13.5,color:'#141314',lineHeight:1.7,textAlign:'center',marginBottom:hint?8:20}}>{stop.text}</p>
       {/* Hint */}
       {hint&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:9.5,color:bpMeta.color,letterSpacing:'0.08em',textTransform:'uppercase',textAlign:'center',marginBottom:18}}>{hint}</div>}
       {/* Mobile note for sidebar step */}
-      {showSidebarNote&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'8px 12px',borderRadius:'0 2px 2px 0',fontSize:12,color:'#4D433B',marginBottom:14}}>On mobile, use the Back and Next buttons to move between sections — the section indicator below the header shows where you are.</div>}
+      {showSidebarNote&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'8px 12px',borderRadius:'0 2px 2px 0',fontSize:12,color:'#141314',marginBottom:14}}>On mobile, use the Back and Next buttons to move between sections — the section indicator below the header shows where you are.</div>}
       {/* Buttons */}
       <div style={{display:'flex',gap:10,justifyContent:'center'}}>
-        <button onClick={onDone} style={{background:'none',border:'1px solid rgba(107,63,42,0.2)',borderRadius:2,padding:'8px 16px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,color:'#8B7B6F',cursor:'pointer'}}>
+        <button onClick={onDone} style={{background:'none',border:'1px solid rgba(20,19,20,0.16)',borderRadius:9999,padding:'10px 22px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:'#7A7069',cursor:'pointer'}}>
           Skip tour
         </button>
-        <button className="tour-next" onClick={()=>isLast?onDone():setStep(s=>s+1)} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:2,padding:'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,fontWeight:500,cursor:'pointer',transition:'filter 0.15s'}}>
+        <button className="tour-next" onClick={()=>isLast?onDone():setStep(s=>s+1)} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'10px 24px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,fontWeight:500,cursor:'pointer',transition:'filter 0.15s'}}>
           {isLast?'Start the intake →':'Next →'}
         </button>
       </div>
       {/* Counter */}
-      <div style={{fontFamily:"'DM Mono',monospace",fontSize:9,color:'rgba(107,63,42,0.3)',textAlign:'center',marginTop:14,letterSpacing:'0.06em'}}>{step+1} of {TOUR_STOPS.length}</div>
+      <div style={{fontFamily:"'DM Mono',monospace",fontSize:9,color:'rgba(20,19,20,0.25)',textAlign:'center',marginTop:14,letterSpacing:'0.06em'}}>{step+1} of {TOUR_STOPS.length}</div>
     </div>
   </div>;
 }
@@ -1665,11 +1677,14 @@ function LinkGenerator({onBack}){
     if(pw===PW){try{sessionStorage.setItem('tpc_gen_auth','1');}catch(e){}setUnlocked(true);setErr(false);}
     else{setErr(true);setPw('');}
   };
-  if(!unlocked)return<div style={{minHeight:'100vh',background:'#27231E',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
-    <div style={{background:'#FBF8F1',borderRadius:4,padding:'36px 32px',maxWidth:380,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.4)'}}>
+  if(!unlocked)return<div style={{minHeight:'100vh',background:'#141314',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+    <div style={{background:'#FCF9F5',borderRadius:16,padding:'36px 32px',maxWidth:380,width:'100%',boxShadow:'0 24px 80px rgba(0,0,0,0.4)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>Victoria only</div>
-      <h2 style={{fontFamily:'Fraunces, serif',fontSize:22,fontWeight:350,color:'#27231E',marginBottom:6}}>Link Generator</h2>
-      <p style={{fontSize:13,color:'#8B7B6F',lineHeight:1.65,marginBottom:24}}>This tool is for Victoria to generate client intake links. Enter the password to continue.</p>
+      <h2 style={{fontSize:24,fontWeight:400,color:'#141314',marginBottom:6}}>
+        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Link </span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>Generator</span>
+      </h2>
+      <p style={{fontSize:13,color:'#7A7069',lineHeight:1.65,marginBottom:24}}>This tool is for Victoria to generate client intake links. Enter the password to continue.</p>
       <div style={{marginBottom:12}}>
         <input
           type="password"
@@ -1677,64 +1692,67 @@ function LinkGenerator({onBack}){
           onChange={e=>{setPw(e.target.value);setErr(false);}}
           onKeyDown={e=>e.key==='Enter'&&tryUnlock()}
           placeholder="Password"
-          style={{...st.input,marginBottom:err?8:0,borderColor:err?'#94431C':'rgba(107,63,42,0.15)'}}
+          style={{...st.input,marginBottom:err?8:0,borderColor:err?'#3041F0':'rgba(20,19,20,0.12)'}}
           autoFocus
         />
-        {err&&<div style={{fontSize:12,color:'#94431C',marginTop:4}}>Incorrect password. Try again.</div>}
+        {err&&<div style={{fontSize:12,color:'#3041F0',marginTop:4}}>Incorrect password. Try again.</div>}
       </div>
-      <button onClick={tryUnlock} style={{background:'#27231E',color:'white',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',width:'100%'}}>
+      <button onClick={tryUnlock} style={{background:'#141314',color:'white',border:'none',borderRadius:9999,padding:'12px 28px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,fontWeight:500,cursor:'pointer',width:'100%'}}>
         Unlock →
       </button>
-      <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:'Instrument Sans, sans-serif',fontSize:12,color:'#8B7B6F',cursor:'pointer',marginTop:16,display:'block'}}>← Back to client view</button>
+      <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:"'Google Sans Flex', sans-serif",fontSize:12,color:'#7A7069',cursor:'pointer',marginTop:16,display:'block'}}>← Back to client view</button>
     </div>
   </div>;
-  return<div style={{minHeight:'100vh',background:'#FBF8F1',fontFamily:'Instrument Sans, sans-serif',color:'#4D433B'}}>
-    <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
-      <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#C98D26',background:'rgba(201,141,38,0.2)',padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase'}}>Link Generator · Victoria</span>
+  return<div style={{minHeight:'100vh',background:'#FCF9F5',fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>
+    <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
+      <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#C98D26',background:'rgba(201,141,38,0.2)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase'}}>Link Generator · Victoria</span>
     </div>
     <div style={{maxWidth:560,margin:'0 auto',padding:'48px 24px'}}>
       <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:'#C98D26',marginBottom:8}}>For Victoria only</div>
-      <h1 style={{fontFamily:'Fraunces, serif',fontSize:26,fontWeight:350,color:'#27231E',marginBottom:8}}>Generate a client intake link</h1>
-      <p style={{fontSize:14,color:'#8B7B6F',lineHeight:1.7,marginBottom:32}}>Select the blueprint and tier, paste the client's Drive folder link, and copy the URL for their welcome email.</p>
+      <h1 style={{fontSize:28,fontWeight:400,color:'#141314',marginBottom:8}}>
+        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Generate a client </span>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>intake link</span>
+      </h1>
+      <p style={{fontSize:14,color:'#7A7069',lineHeight:1.7,marginBottom:32}}>Select the blueprint and tier, paste the client's Drive folder link, and copy the URL for their welcome email.</p>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div>
-          <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Blueprint</div>
+          <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:6}}>Blueprint</div>
           <select style={{...st.input,cursor:'pointer'}} value={bp} onChange={e=>setBp(e.target.value)}>
             {Object.entries(BP_META).map(([k,v])=><option key={k} value={k}>{v.name}</option>)}
           </select>
         </div>
         {bp!=='speaker'&&<div>
-          <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Tier</div>
+          <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:6}}>Tier</div>
           <select style={{...st.input,cursor:'pointer'}} value={tier} onChange={e=>setTier(e.target.value)}>
             <option value="emerge">Emerge — $149/mo</option>
             <option value="elevate">Elevate — $349/mo</option>
           </select>
         </div>}
-        {bp==='speaker'&&<div style={{background:`${meta.color}0e`,border:`1px solid ${meta.color}33`,borderRadius:2,padding:'10px 14px',display:'flex',alignItems:'center'}}>
+        {bp==='speaker'&&<div style={{background:`${meta.color}0e`,border:`1px solid ${meta.color}33`,borderRadius:12,padding:'10px 14px',display:'flex',alignItems:'center'}}>
           <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:meta.color}}>Flat Rate — $1,000</span>
         </div>}
       </div>
       <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:6}}>Client Google Drive folder link</div>
+        <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:6}}>Client Google Drive folder link</div>
         <input style={st.input} value={drive} onChange={e=>setDrive(e.target.value)} placeholder='Paste the shared Drive folder URL here'/>
-        <div style={{fontSize:12,color:'#8B7B6F',marginTop:5}}>Set folder to "Anyone with the link can view" before sending.</div>
+        <div style={{fontSize:12,color:'#7A7069',marginTop:5}}>Set folder to "Anyone with the link can view" before sending.</div>
       </div>
-      <div style={{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:16,marginBottom:16}}>
+      <div style={{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:16,marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
           <div style={{width:10,height:10,borderRadius:'50%',background:meta.color,flexShrink:0}}/>
-          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#8B7B6F'}}>{meta.name} · {meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+          <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#7A7069'}}>{meta.name} · {meta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
         </div>
-        <div style={{fontSize:12,color:'#27231E',wordBreak:'break-all',lineHeight:1.6,marginBottom:12}}>{link}</div>
-        <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(107,63,42,0.06)',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'7px 14px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#8B7B6F',cursor:'pointer',transition:'all 0.15s'}}>
+        <div style={{fontSize:12,color:'#141314',wordBreak:'break-all',lineHeight:1.6,marginBottom:12}}>{link}</div>
+        <button onClick={copy} style={{background:copied?'rgba(91,109,74,0.12)':'rgba(20,19,20,0.04)',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'7px 14px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:copied?'#5B6D4A':'#7A7069',cursor:'pointer',transition:'all 0.15s'}}>
           {copied?'✓ Copied!':'Copy link'}
         </button>
       </div>
-      <div style={{background:'rgba(91,109,74,0.06)',borderLeft:'2px solid #5B6D4A',borderRadius:'0 2px 2px 0',padding:'12px 16px',fontSize:13,color:'#4D433B',lineHeight:1.65,marginBottom:32}}>
+      <div style={{background:'rgba(91,109,74,0.06)',borderLeft:'2px solid #5B6D4A',borderRadius:'0 2px 2px 0',padding:'12px 16px',fontSize:13,color:'#141314',lineHeight:1.65,marginBottom:32}}>
         <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'#5B6D4A',marginBottom:4}}>How to use</div>
         Select the blueprint and tier from the discovery call. Paste the client's Drive folder link. Copy the URL and paste into their welcome email. The intake loads pre-configured for their build.
       </div>
-      <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:'Instrument Sans, sans-serif',fontSize:13,color:'#8B7B6F',cursor:'pointer'}}>← Back</button>
+      <button onClick={onBack} style={{background:'none',border:'none',padding:0,fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:'#7A7069',cursor:'pointer'}}>← Back</button>
     </div>
   </div>;
 }
@@ -1759,42 +1777,45 @@ function LandingPage({onStart,driveUrl,bpMeta,tier,onGenerator}){
     'Any credentials, certifications, or professional standing',
     'Your social media profile links',
   ];
-  return<div style={{minHeight:'100vh',background:'#FBF8F1',fontFamily:'Instrument Sans, sans-serif',color:'#4D433B'}}>
-    <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
-      <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+  return<div style={{minHeight:'100vh',background:'#FCF9F5',fontFamily:"'Google Sans Flex', sans-serif",color:'#141314'}}>
+    <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 24px'}}>
+      <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+      <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
     </div>
     <div style={{maxWidth:600,margin:'0 auto',padding:'36px 18px 60px'}}>
       <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:10}}>Your website starts here</div>
-      <h1 style={{fontFamily:'Fraunces, serif',fontSize:32,fontWeight:350,color:'#27231E',lineHeight:1.2,marginBottom:16}}>Let's build your site.<br/>Start with your content.</h1>
-      <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:12}}>This intake walks you through every section of your {bpMeta.name} — one at a time, in the same order your site is built. For each section you will find clear guidance on what to write, how long it should be, and why it matters.</p>
-      <p style={{fontSize:15,color:'#4D433B',lineHeight:1.75,marginBottom:32}}>When you submit, Victoria receives everything organized and ready to build from. Most clients finish in <strong>{timeEstimate}</strong>.</p>
-      <div style={{background:'#fff',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:20,marginBottom:32}}>
+      <h1 style={{fontSize:38,fontWeight:400,color:'#141314',lineHeight:1.2,marginBottom:16,letterSpacing:'-0.01em'}}>
+        <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Let's build your site.</span><br/>
+        <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>Start with your content.</span>
+      </h1>
+      <p style={{fontSize:16,color:'#141314',lineHeight:1.7,marginBottom:12}}>This intake walks you through every section of your {bpMeta.name} — one at a time, in the same order your site is built. For each section you will find clear guidance on what to write, how long it should be, and why it matters.</p>
+      <p style={{fontSize:16,color:'#141314',lineHeight:1.7,marginBottom:32}}>When you submit, Victoria receives everything organized and ready to build from. Most clients finish in <strong>{timeEstimate}</strong>.</p>
+      <div style={{background:'#fff',border:'1px solid rgba(20,19,20,0.12)',borderRadius:12,padding:20,marginBottom:32}}>
         <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Before you start — have these ready</div>
-        {checklist.map((item,i)=><div key={i} style={{display:'flex',gap:12,marginBottom:10,fontSize:13.5,color:'#4D433B',lineHeight:1.5}}>
+        {checklist.map((item,i)=><div key={i} style={{display:'flex',gap:12,marginBottom:10,fontSize:13.5,color:'#141314',lineHeight:1.5}}>
           <div style={{width:20,height:20,background:`${bpMeta.color}18`,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,fontSize:11,color:bpMeta.color,fontWeight:500,marginTop:1}}>{i+1}</div>
           {item}
         </div>)}
       </div>
-      {driveUrl&&<div style={{background:`${bpMeta.color}0e`,border:`1px solid ${bpMeta.color}33`,borderRadius:2,padding:16,marginBottom:28,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
+      {driveUrl&&<div style={{background:`${bpMeta.color}0e`,border:`1px solid ${bpMeta.color}33`,borderRadius:12,padding:16,marginBottom:28,display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap'}}>
         <div>
           <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:3}}>Your project folder</div>
-          <div style={{fontSize:13,color:'#4D433B'}}>Upload your photos and files here as you go through the intake.</div>
+          <div style={{fontSize:13,color:'#141314'}}>Upload your photos and files here as you go through the intake.</div>
         </div>
-        <button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:2,padding:'8px 16px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,fontWeight:500,cursor:'pointer',flexShrink:0}}>
+        <button onClick={()=>window.open(driveUrl,'_blank','noopener,noreferrer')} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'10px 22px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,fontWeight:500,cursor:'pointer',flexShrink:0}}>
           📁 Open folder →
         </button>
       </div>}
-      <div style={{background:'#27231E',borderRadius:2,padding:'16px 20px',marginBottom:32,fontSize:13,color:'rgba(255,255,255,0.65)',lineHeight:1.7}}>
+      <div style={{background:'#141314',borderRadius:12,padding:'16px 20px',marginBottom:32,fontSize:13,color:'rgba(255,255,255,0.65)',lineHeight:1.7}}>
         <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>AI writing prompts</span>
         Each section includes an AI writing prompt pre-loaded with your business info. If you get stuck, expand the prompt, copy it, and paste it into Claude or ChatGPT for a strong first draft — then make it yours.
       </div>
-      <button className="lp-btn" onClick={onStart} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:2,padding:'14px 32px',fontFamily:'Fraunces, serif',fontSize:18,fontWeight:350,cursor:'pointer',letterSpacing:'0.01em',transition:'all 0.15s',display:'inline-flex',alignItems:'center',gap:10}}>
+      <button className="lp-btn" onClick={onStart} style={{background:bpMeta.color,color:'white',border:'none',borderRadius:9999,padding:'15px 36px',fontFamily:"'Just Serif', Georgia, serif",fontSize:18,fontWeight:400,cursor:'pointer',letterSpacing:'0.01em',transition:'all 0.15s',display:'inline-flex',alignItems:'center',gap:10}}>
         Start my intake →
       </button>
-      <div style={{marginTop:40,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.15)'}}>
-        <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:'#8B7B6F',marginBottom:8}}>For Victoria</div>
-        <button onClick={onGenerator} style={{background:'none',border:'none',padding:0,fontFamily:'Instrument Sans, sans-serif',fontSize:13,color:bpMeta.color,cursor:'pointer',textDecoration:'underline',textUnderlineOffset:3}}>Generate a client intake link →</button>
+      <div style={{marginTop:40,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.12)'}}>
+        <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.08em',textTransform:'uppercase',color:'#7A7069',marginBottom:8}}>For Victoria</div>
+        <button onClick={onGenerator} style={{background:'none',border:'none',padding:0,fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,color:bpMeta.color,cursor:'pointer',textDecoration:'underline',textUnderlineOffset:3}}>Generate a client intake link →</button>
       </div>
     </div>
   </div>;
@@ -1807,15 +1828,18 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
   const isMobile=useIsMobile();
   const upd=(k,v)=>setProfile(p=>({...p,[k]:v}));
   const pf=(label,key,ph,hint)=><div style={{marginBottom:20}}>
-    <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>{label}</div>
-    {hint&&<div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>{hint}</div>}
+    <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4}}>{label}</div>
+    {hint&&<div style={{fontSize:12,color:'#7A7069',marginBottom:6}}>{hint}</div>}
     <input style={st.input} value={profile[key]||''} onChange={e=>upd(key,e.target.value)} placeholder={ph}/>
   </div>;
-  return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FBF8F1'}}>
+  return<div style={{flex:1,overflowY:'auto',padding:'26px 34px 40px',background:'#FCF9F5'}}>
     <div style={{fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Step 01 of 03</div>
-    <h1 style={{fontFamily:'Fraunces, serif',fontSize:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:'0 0 4px'}}>Business profile</h1>
-    <p style={{fontSize:13,color:'#8B7B6F',marginBottom:20}}>Pre-fills every AI writing prompt so your drafts sound like you, not a template.</p>
-    <div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:24,fontSize:13,lineHeight:1.65,color:'#4D433B'}}>
+    <h1 style={{fontSize:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:'0 0 4px'}}>
+      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Business </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>profile</span>
+    </h1>
+    <p style={{fontSize:13,color:'#7A7069',marginBottom:20}}>Pre-fills every AI writing prompt so your drafts sound like you, not a template.</p>
+    <div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:24,fontSize:13,lineHeight:1.65,color:'#141314'}}>
       <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>How this is used</span>
       Everything here stays in this session only. It personalizes the AI prompts so generated copy reflects your actual business.
     </div>
@@ -1826,71 +1850,71 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
     {pf('In business since (year)','since','e.g. 2014',null)}
     {pf(bpMeta.name==='Speaker Blueprint'?'Your ideal audience or event type':'Your ideal customer','ideal',bpMeta.name==='Speaker Blueprint'?'e.g. corporate leadership conferences · university audiences · women\'s retreats':'e.g. busy Austin homeowners · couples planning intimate Portland weddings',bpMeta.name==='Speaker Blueprint'?'The audience or event type you\'re the best fit for.':'The person most likely to hire you or buy from you.')}
     <div style={{marginBottom:20}}>
-      <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>What sets you apart</div>
-      <div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>The one or two things that genuinely differentiate you from anyone else doing what you do.</div>
+      <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4}}>What sets you apart</div>
+      <div style={{fontSize:12,color:'#7A7069',marginBottom:6}}>The one or two things that genuinely differentiate you from anyone else doing what you do.</div>
       <textarea style={{...st.input,minHeight:72,resize:'vertical',lineHeight:1.6}} value={profile.differentiator||''} onChange={e=>upd('differentiator',e.target.value)} placeholder='e.g. Same-day quotes guaranteed · or · I only take 20 weddings a year so every client gets my full attention · or · All products handmade in small batches with organic ingredients'/>
     </div>
     <div style={{marginBottom:24}}>
-      <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:8}}>Tone preference</div>
+      <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:8}}>Tone preference</div>
       <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
-        {TONE_OPTIONS.map(t=><button key={t} onClick={()=>upd('tone',t)} style={{background:profile.tone===t?bpMeta.color:'#fff',color:profile.tone===t?'white':'#4D433B',border:`1px solid ${profile.tone===t?bpMeta.color:'rgba(107,63,42,0.15)'}`,borderRadius:2,padding:'7px 14px',fontFamily:'Instrument Sans, sans-serif',fontSize:13,cursor:'pointer',transition:'all 0.15s'}}>{t}</button>)}
+        {TONE_OPTIONS.map(t=><button key={t} onClick={()=>upd('tone',t)} style={{background:profile.tone===t?bpMeta.color:'#fff',color:profile.tone===t?'white':'#141314',border:`1px solid ${profile.tone===t?bpMeta.color:'rgba(20,19,20,0.12)'}`,borderRadius:9999,padding:'7px 14px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13,cursor:'pointer',transition:'all 0.15s'}}>{t}</button>)}
       </div>
     </div>
 
     {/* ── Contact details ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)'}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Contact details</div>
       {pf('Business email address','email','e.g. hello@yourbusiness.com','This will be used for site contact forms and is not shared with anyone.')}
       {pf('Business phone number (optional)','phone','e.g. (512) 555-0123',null)}
       {pf('Business address (if brick and mortar or service area)','address','e.g. 123 Main St, Austin TX 78701 · or · Serving all of Metro Detroit',null)}
     </div>
     {/* ── Online presence ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)'}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Online presence</div>
       {pf('Existing website URL (if you have one)','existingUrl','e.g. https://www.yoursite.com · or · None',null)}
       {pf('Any other online presence','otherLinks','e.g. Linktree, Etsy shop, Google Business Profile — paste links separated by commas',null)}
     </div>
     {/* ── Existing brand ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)'}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Existing brand (if you have one)</div>
-      <p style={{fontSize:12,color:'#8B7B6F',marginBottom:14,lineHeight:1.6}}>If you already have brand colors and fonts, enter them here. If you are starting fresh, leave these blank — you will choose your palette and font pairing on the next step.</p>
+      <p style={{fontSize:12,color:'#7A7069',marginBottom:14,lineHeight:1.6}}>If you already have brand colors and fonts, enter them here. If you are starting fresh, leave these blank — you will choose your palette and font pairing on the next step.</p>
       {pf('Existing brand colors (hex codes)','existingColors','e.g. #2C4A3E, #F5F0E8, #C4956A · or · None yet — I\'ll choose on the next step',null)}
       {pf('Existing brand fonts (if you know them)','existingFonts','e.g. Playfair Display for headings, Lato for body · or · None yet',null)}
     </div>
     {/* ── Inspiration ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)'}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:14}}>Design inspiration</div>
       <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>Websites you love the look or feel of</div>
-        <div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>Paste URLs if possible — can be any industry, not just yours.</div>
+        <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4}}>Websites you love the look or feel of</div>
+        <div style={{fontSize:12,color:'#7A7069',marginBottom:6}}>Paste URLs if possible — can be any industry, not just yours.</div>
         <textarea style={{...st.input,minHeight:68,resize:'vertical',lineHeight:1.6}} value={profile.inspoLove||''} onChange={e=>upd('inspoLove',e.target.value)} placeholder={'e.g. https://www.tonyrobbins.com · https://www.studiodiy.com\nWhat I love about them: clean layouts, strong CTAs, confident copy'}/>
       </div>
       <div style={{marginBottom:20}}>
-        <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4}}>Styles or vibes to avoid</div>
-        <div style={{fontSize:12,color:'#8B7B6F',marginBottom:6}}>Anything you definitely do not want — colors, styles, layouts, energy.</div>
+        <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4}}>Styles or vibes to avoid</div>
+        <div style={{fontSize:12,color:'#7A7069',marginBottom:6}}>Anything you definitely do not want — colors, styles, layouts, energy.</div>
         <textarea style={{...st.input,minHeight:56,resize:'vertical',lineHeight:1.6}} value={profile.inspoAvoid||''} onChange={e=>upd('inspoAvoid',e.target.value)} placeholder={'e.g. Dark backgrounds, overly corporate feels, clip art, Comic Sans energy'}/>
       </div>
     </div>
     {/* ── Privacy policy ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)'}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)'}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Privacy policy</div>
-      <div style={{background:'rgba(107,63,42,0.05)',borderLeft:'2px solid rgba(107,63,42,0.2)',padding:'10px 14px',marginBottom:14,fontSize:12.5,color:'#4D433B',lineHeight:1.7}}>
+      <div style={{background:'rgba(20,19,20,0.04)',borderLeft:'2px solid rgba(20,19,20,0.16)',padding:'10px 14px',marginBottom:14,fontSize:12.5,color:'#141314',lineHeight:1.7}}>
         Because your site will collect visitor information through forms, a privacy policy is a legal requirement. The Pier Collective offers Termageddon — an auto-updating privacy policy service that keeps you covered as laws change. Setup is $49 + $129/year, and we handle everything.
       </div>
-      <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:8}}>Would you like to add Termageddon to your plan?</div>
+      <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:8}}>Would you like to add Termageddon to your plan?</div>
       <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
         {['Yes — please add Termageddon to my plan','No — I already have a privacy policy','No — I will handle it myself later'].map(opt=>(
-          <button key={opt} onClick={()=>upd('termageddon',opt)} style={{background:profile.termageddon===opt?bpMeta.color:'#fff',color:profile.termageddon===opt?'white':'#4D433B',border:`1px solid ${profile.termageddon===opt?bpMeta.color:'rgba(107,63,42,0.15)'}`,borderRadius:2,padding:'7px 14px',fontFamily:'Instrument Sans, sans-serif',fontSize:12.5,cursor:'pointer',transition:'all 0.15s'}}>{opt}</button>
+          <button key={opt} onClick={()=>upd('termageddon',opt)} style={{background:profile.termageddon===opt?bpMeta.color:'#fff',color:profile.termageddon===opt?'white':'#141314',border:`1px solid ${profile.termageddon===opt?bpMeta.color:'rgba(20,19,20,0.12)'}`,borderRadius:9999,padding:'7px 14px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:12.5,cursor:'pointer',transition:'all 0.15s'}}>{opt}</button>
         ))}
       </div>
     </div>
     {/* ── Anything else ── */}
-    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(107,63,42,0.12)',marginBottom:28}}>
+    <div style={{marginTop:28,paddingTop:24,borderTop:'1px solid rgba(20,19,20,0.10)',marginBottom:28}}>
       <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>Anything else?</div>
-      <div style={{fontSize:12,color:'#8B7B6F',marginBottom:8}}>Anything else you would like Victoria to know about your business or your vision for the site.</div>
+      <div style={{fontSize:12,color:'#7A7069',marginBottom:8}}>Anything else you would like Victoria to know about your business or your vision for the site.</div>
       <textarea style={{...st.input,minHeight:80,resize:'vertical',lineHeight:1.6}} value={profile.anythingElse||''} onChange={e=>upd('anythingElse',e.target.value)} placeholder={'e.g. I want the site to feel very different from competitors in my area. I also have a launch date in mind — April 1st.'}/>
     </div>
-    <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:'10px 24px',fontFamily:'Instrument Sans, sans-serif',fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
+    <button onClick={onNext} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:'12px 28px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:13.5,fontWeight:500,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6}}>
       Next: Design preferences →
     </button>
   </div>;
@@ -1936,11 +1960,14 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
     finally{setSubmitting(false);}
   };
 
-  if(submitted)return<div style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#FBF8F1',textAlign:'center',padding:40}}>
+  if(submitted)return<div style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',background:'#FCF9F5',textAlign:'center',padding:40}}>
     <div style={{width:52,height:52,background:bpMeta.color,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16,fontSize:22,color:'white'}}>✓</div>
-    <h1 style={{fontFamily:'Fraunces, serif',fontSize:28,fontWeight:350,color:'#27231E',marginBottom:8}}>Content submitted</h1>
-    <p style={{fontSize:14,color:'#8B7B6F',lineHeight:1.7,maxWidth:380,marginBottom:24}}>Your content is on its way to Victoria. She will review everything and be in touch within 2 business days. Your site will be live within two weeks of receiving complete content.</p>
-    <div style={{padding:'14px 20px',background:`${bpMeta.color}0e`,borderRadius:2,borderLeft:`2px solid ${bpMeta.color}`,fontSize:13,color:'#4D433B',maxWidth:380,textAlign:'left'}}>
+    <h1 style={{fontSize:32,fontWeight:400,color:'#141314',marginBottom:8}}>
+      <span style={{fontFamily:"'Just Serif', Georgia, serif"}}>Content </span>
+      <span style={{fontFamily:"'Google Sans Flex', sans-serif",color:'#3041F0'}}>submitted</span>
+    </h1>
+    <p style={{fontSize:14,color:'#7A7069',lineHeight:1.7,maxWidth:380,marginBottom:24}}>Your content is on its way to Victoria. She will review everything and be in touch within 2 business days. Your site will be live within two weeks of receiving complete content.</p>
+    <div style={{padding:'14px 20px',background:`${bpMeta.color}0e`,borderRadius:12,borderLeft:`2px solid ${bpMeta.color}`,fontSize:13,color:'#141314',maxWidth:380,textAlign:'left'}}>
       <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,marginBottom:6}}>What happens next</div>
       Victoria reviews your content and follows up with any clarifying questions. Once confirmed, your build begins.
     </div>
@@ -1949,9 +1976,9 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
   return<>
     {showTour&&<TourOverlay bpMeta={bpMeta} onDone={dismissTour} isMobile={isMobile}/>}
     {/* Top header bar */}
-    <div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 14px':'0 20px',flexShrink:0}}>
-      {!isMobile&&<span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
-      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
+    <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 14px':'0 20px',flexShrink:0}}>
+      {!isMobile&&<span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
+      <span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
       <div style={{flex:1,height:3,background:'rgba(255,255,255,0.1)',borderRadius:2,overflow:'hidden'}}>
         <div style={{height:'100%',background:bpMeta.color,width:pct+'%',transition:'width 0.4s ease'}}/>
       </div>
@@ -1959,21 +1986,21 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
       {isMobile&&<button onClick={()=>setShowTour(true)} style={{background:'none',border:'none',color:'rgba(255,255,255,0.4)',fontSize:16,cursor:'pointer',padding:'0 4px',flexShrink:0}} title="Show tour">?</button>}
     </div>
     {/* Mobile section indicator */}
-    {isMobile&&<div style={{background:'#1E1A16',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'7px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+    {isMobile&&<div style={{background:'#0d0c0d',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'7px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
       <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)'}}>{cur.page.name}</span>
       <span style={{fontFamily:"'DM Mono',monospace",fontSize:9,letterSpacing:'0.06em',color:bpMeta.color}}>{cur.name.replace(' [Elevate]','').replace(' [New]','').substring(0,32)}</span>
     </div>}
     <div style={{flex:1,display:'flex',overflow:'hidden'}}>
       {/* Sidebar — desktop only */}
-      {!isMobile&&<div style={{width:196,background:'#27231E',overflowY:'auto',flexShrink:0,padding:'8px 0 24px'}}>
+      {!isMobile&&<div style={{width:196,background:'#141314',overflowY:'auto',flexShrink:0,padding:'8px 0 24px'}}>
         {/* Back to earlier steps */}
         <div style={{padding:'10px 14px 6px',borderBottom:'1px solid rgba(255,255,255,0.06)',marginBottom:6}}>
-          <button onClick={onGoToProfile} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:'Instrument Sans, sans-serif',fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
+          <button onClick={onGoToProfile} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:"'Google Sans Flex', sans-serif",fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
             onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}
             onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>
             <span style={{fontSize:9}}>←</span> Business Profile
           </button>
-          <button onClick={onGoToDesign} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:'Instrument Sans, sans-serif',fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
+          <button onClick={onGoToDesign} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',padding:'4px 6px 4px 0',cursor:'pointer',color:'rgba(255,255,255,0.35)',fontFamily:"'Google Sans Flex', sans-serif",fontSize:11,width:'100%',textAlign:'left',transition:'color 0.15s'}}
             onMouseEnter={e=>e.currentTarget.style.color='rgba(255,255,255,0.7)'}
             onMouseLeave={e=>e.currentTarget.style.color='rgba(255,255,255,0.35)'}>
             <span style={{fontSize:9}}>←</span> Design Preferences
@@ -1983,7 +2010,7 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
           const si=ALL.findIndex(s=>s.page.id===pg.id);
           return<div key={pg.id}>
             <div onClick={()=>jump(si)} style={{padding:'8px 14px 5px',fontFamily:'DM Mono, monospace',fontSize:9.5,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',display:'flex',alignItems:'center',gap:6,cursor:'pointer',userSelect:'none'}}>
-              <span style={{fontSize:8.5,background:'rgba(255,255,255,0.07)',borderRadius:2,padding:'1px 5px'}}>{pg.num}</span>
+              <span style={{fontSize:8.5,background:'rgba(255,255,255,0.07)',borderRadius:12,padding:'1px 5px'}}>{pg.num}</span>
               {pg.name}
               {pg.tag&&<span style={{fontSize:8,color:bpMeta.color,opacity:0.7}}>E</span>}
             </div>
@@ -1999,44 +2026,44 @@ function Intake({profile,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,o
         })}
       </div>}
       {/* Main content area */}
-      <div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 100px':'26px 34px 40px',background:'#FBF8F1'}}>
+      <div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 100px':'26px 34px 40px',background:'#FCF9F5'}}>
         {!isMobile&&<div style={{fontFamily:"'DM Mono',monospace",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
           Page {cur.page.num} — {cur.page.name}
         </div>}
-        <h1 style={{fontFamily:'Fraunces, serif',fontSize:isMobile?20:23,fontWeight:350,color:'#27231E',lineHeight:1.2,margin:isMobile?'6px 0 2px':'4px 0 2px'}}>
+        <h1 style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:isMobile?22:26,fontWeight:400,color:'#141314',lineHeight:1.2,margin:isMobile?'6px 0 2px':'4px 0 2px'}}>
           {cur.name.replace(' [Elevate]','').replace(' [New]','')}
-          {cur.tag&&<span style={{fontSize:12,fontWeight:400,color:bpMeta.color,marginLeft:8,fontFamily:'Instrument Sans, sans-serif'}}>{cur.tag}</span>}
+          {cur.tag&&<span style={{fontSize:12,fontWeight:400,color:bpMeta.color,marginLeft:8,fontFamily:"'Google Sans Flex', sans-serif"}}>{cur.tag}</span>}
         </h1>
-        {cur.sub&&<p style={{fontSize:13,color:'#8B7B6F',marginBottom:16}}>{cur.sub}</p>}
-        {cur.why&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:22,fontSize:13,lineHeight:1.65,color:'#4D433B'}}>
+        {cur.sub&&<p style={{fontSize:13,color:'#7A7069',marginBottom:16}}>{cur.sub}</p>}
+        {cur.why&&<div style={{background:`${bpMeta.color}0e`,borderLeft:`2px solid ${bpMeta.color}`,padding:'10px 14px',marginBottom:22,fontSize:13,lineHeight:1.65,color:'#141314'}}>
           <span style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>Why it matters</span>
           {cur.why}
         </div>}
         {cur.fields.map(f=><div key={f.id} style={{marginBottom:20}}>
-          <div style={{fontSize:13,fontWeight:500,color:'#27231E',marginBottom:4,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div style={{fontSize:13,fontWeight:500,color:'#141314',marginBottom:4,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
             <span>{f.label}</span>
-            {f.guidance&&(f.type==='text'||f.type==='sel'||f.type==='checks')&&<span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#8B7B6F'}}>{f.guidance}</span>}
+            {f.guidance&&(f.type==='text'||f.type==='sel'||f.type==='checks')&&<span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:'#7A7069'}}>{f.guidance}</span>}
           </div>
           <Field f={f} val={get(cur.id,f.id,f.type==='checks'||f.type==='cards'||f.type==='rep'?[]:'')} onChange={v=>setField(cur.id,f.id,v)} driveUrl={driveUrl} bpColor={bpMeta.color}/>
         </div>)}
         {promptText&&<div style={{marginTop:4}}>
-          <button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:'6px 12px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#8B7B6F',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
+          <button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:'DM Mono, monospace',fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
             ✦ AI writing prompt {ai?'↑':'↓'}
           </button>
-          {ai&&<div style={{background:'#27231E',borderRadius:2,padding:14,marginTop:9}}>
+          {ai&&<div style={{background:'#141314',borderRadius:12,padding:14,marginTop:9}}>
             <div style={{fontFamily:'DM Mono, monospace',fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',marginBottom:7}}>Copy, fill in any bracketed details, paste into Claude or ChatGPT</div>
             <div style={{fontSize:12,color:'rgba(255,255,255,0.75)',lineHeight:1.75,fontStyle:'italic',whiteSpace:'pre-wrap'}}>{promptText}</div>
           </div>}
         </div>}
-        {error&&<div style={{marginTop:16,padding:'10px 14px',background:'rgba(148,67,28,0.08)',borderLeft:'2px solid #94431C',borderRadius:2,fontSize:13,color:'#94431C'}}>{error}</div>}
+        {error&&<div style={{marginTop:16,padding:'10px 14px',background:'rgba(48,65,240,0.06)',borderLeft:'2px solid #3041F0',borderRadius:12,fontSize:13,color:'#3041F0'}}>{error}</div>}
       </div>
     </div>
-    <div style={{height:isMobile?64:60,background:'#fff',borderTop:'1px solid rgba(107,63,42,0.15)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'0 16px':'0 34px',flexShrink:0,position:isMobile?'sticky':'static',bottom:0,zIndex:10}}>
-      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#4D433B',border:'1px solid rgba(107,63,42,0.15)',borderRadius:2,padding:isMobile?'9px 16px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
-      {!isMobile&&<span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'#8B7B6F'}}>{cur.page.name}</span>}
+    <div style={{height:isMobile?64:60,background:'#fff',borderTop:'1px solid rgba(20,19,20,0.12)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'0 16px':'0 34px',flexShrink:0,position:isMobile?'sticky':'static',bottom:0,zIndex:10}}>
+      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#141314',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
+      {!isMobile&&<span style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:'#7A7069'}}>{cur.page.name}</span>}
       {step<total-1
-        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:isMobile?'9px 16px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
-        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#8B7B6F':bpMeta.color,color:'#fff',border:'none',borderRadius:2,padding:isMobile?'9px 14px':'8px 20px',fontFamily:'Instrument Sans, sans-serif',fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
+        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
+        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#7A7069':bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 14px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
           {submitting?'Sending…':'Submit content ✓'}
         </button>}
     </div>
@@ -2058,9 +2085,9 @@ export default function App(){
     document.documentElement.style.setProperty('--bp-color',bpMeta.color);
   },[]);
 
-  const Header=()=><div style={{height:50,background:'#27231E',display:'flex',alignItems:'center',gap:12,padding:'0 20px',flexShrink:0}}>
-    <span style={{fontFamily:'Fraunces, serif',fontSize:14,fontWeight:350,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
-    <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:2,letterSpacing:'0.08em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
+  const Header=()=><div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:12,padding:'0 20px',flexShrink:0}}>
+    <span style={{fontFamily:"'Just Serif', Georgia, serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>
+    <span style={{fontFamily:'DM Mono, monospace',fontSize:10,color:bpMeta.color,background:`${bpMeta.color}22`,padding:'3px 8px',borderRadius:12,letterSpacing:'0.08em',textTransform:'uppercase'}}>{bpMeta.name.replace(' Blueprint','')} · {bpMeta.name==='Speaker Blueprint'?'One-Page':(tier==='elevate'?'Elevate':'Emerge')}</span>
   </div>;
 
   if(screen==='generator')return<><style>{FONTS+INTAKE_CSS}</style><LinkGenerator onBack={()=>setScreen('landing')}/></>;
@@ -2075,4 +2102,3 @@ export default function App(){
     </div>
   </>;
 }
-
