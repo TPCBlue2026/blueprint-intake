@@ -87,9 +87,27 @@ const BUSINESS_QUESTIONS = {
 };
 const ACTIVE_BLUEPRINTS=['quote','consultation','booking','inquiry'];
 function detailQuestions(bpKey){return [...BUSINESS_QUESTIONS.shared,...(BUSINESS_QUESTIONS[bpKey]||[])];}
-function buildDecisionPrompt(q,profile,bpKey){
-  const meta=BP_META[bpKey]||BP_META.quote;
-  return `Continue in the same AI conversation as my Business Learning Prompt. I am preparing my ${meta.name} website and have not yet established this business decision: ${q.label}\n\nHelp me think it through rather than choosing for me. Ask up to three focused questions, then explain three practical options, including their advantages, tradeoffs, and effects on customers. Recommend a sensible starting point for a new ${profile.type||'service'} business, but clearly label it as a suggestion. Do not invent my policies, prices, credentials, or legal obligations. Flag anything that requires professional or local legal verification. Once I choose, draft concise, accurate business facts I can paste into my questionnaire. Do not treat a suggested option as confirmed until I approve it.`;
+function buildDecisionPrompt(q,profile,bpKey,details={}){
+  // These are the actual keys saved by ProfileStep, not display labels.
+  const profileFields=[
+    ['biz','Business name'],['type','Type of business'],['area','Location or service area'],
+    ['ideal','Ideal customers'],['differentiator','What makes the business different'],
+    ['tone','Preferred communication style'],['since','Year established'],
+    ['anythingElse','Other useful business context'],
+  ];
+  const context=profileFields
+    .filter(([key])=>String(profile[key]||'').trim())
+    .map(([key,label])=>`${label}: ${String(profile[key]).trim()}`).join('\n');
+
+  // Confirmed decisions are reusable context. Never describe suggestions or
+  // deferred/empty responses as established business facts.
+  const relevant=detailQuestions(bpKey).filter(item=>item.id!==q.id);
+  const priorFacts=relevant.map(item=>{
+    const value=details[item.id]||{};
+    const answer=String(value.answer||'').trim();
+    return value.mode!=='later'&&answer?`${item.label}\n${answer}`:null;
+  }).filter(Boolean).join('\n\n');
+  return `I'm working through a business decision and would like your help thinking it through. This is a standalone request; you do not need any earlier AI conversation.\n\nABOUT MY BUSINESS (FROM MY QUESTIONNAIRE)\n${context||'I have not filled in my basic business information yet. Please ask me what you need to know.'}\n\n${priorFacts?`OTHER BUSINESS DETAILS I HAVE ALREADY PROVIDED\n${priorFacts}\n\n`:''}THE DECISION I'M WORKING ON\n${q.label}${q.hint?`\nAdditional context: ${q.hint}`:''}\n\nUse my actual business type, customers, location, and confirmed information to make your guidance specific. If the decision concerns services, suggest only realistic possibilities for my capabilities and audience, and ask about my skills, resources, and capacity before recommending anything.\n\nAsk up to three focused questions first. After I answer, outline three practical approaches, explaining the advantages, tradeoffs, and customer implications of each. Recommend a reasonable starting approach, clearly labeled as a suggestion, but leave the decision to me. Do not invent or treat any suggested service, price, policy, credential, or promise as established. Identify anything that needs local legal or professional verification. Once I explicitly choose, help me write a concise, accurate answer I can paste into my questionnaire. Do not consider anything confirmed until I approve it.`;
 }
 function BusinessDetailsStep({profile,details,setDetails,bpKey,bpMeta,onBack,onNext}){
   const [expanded,setExpanded]=useState({});
@@ -99,14 +117,14 @@ function BusinessDetailsStep({profile,details,setDetails,bpKey,bpMeta,onBack,onN
   return <div className="tpc-stage" style={{flex:1,overflowY:'auto',padding:'32px 22px 70px',background:'#FCF9F5'}}><div style={{maxWidth:840,margin:'0 auto'}}>
     <div className="tpc-eyebrow">01 / Getting to know your business</div>
     <h1 className="tpc-heading">Let's get the details straight.</h1>
-    <p className="tpc-intro">Your profile tells your AI who you are. These answers explain what you actually offer, how you work, and what clients should expect. Answer what you know. If you're still figuring something out, there's help for that.</p>
+    <p className="tpc-intro">Your Business Profile gives us the basics. These answers explain what you actually offer, how you work, and what clients should expect. Answer what you know. If you're still figuring something out, there's help for that.</p>
     <div className="tpc-note"><strong>Why this matters:</strong> Your answers become the factual foundation of your AI Learning Prompt. You'll enter them once instead of repeating them on every website page. You can still write all your website copy yourself.</div>
     {questions.map((q,i)=>{const v=details[q.id]||{};const mode=v.mode||'ready';return <div key={q.id} className="tpc-question">
       <div className="tpc-eyebrow">QUESTION {String(i+1).padStart(2,'0')} / {String(questions.length).padStart(2,'0')}</div>
       <h2 style={{fontSize:19,fontWeight:550,margin:'5px 0 6px'}}>{q.label}</h2>
       {q.hint&&<p style={{fontSize:13,color:'#7A7069',lineHeight:1.6,marginBottom:13}}>{q.hint}</p>}
       <div className="tpc-choice-row">{[['ready','I know this'],['help','Help me figure this out'],['later',"I'll decide later"]].map(([id,label])=><button key={id} type="button" className={'tpc-choice '+(mode===id?'selected':'')} onClick={()=>setAnswer(q.id,'mode',id)}>{label}</button>)}</div>
-      {mode==='help'&&<div className="tpc-ai-help"><strong>✦ Work through this decision with AI</strong><p>Copy this planning prompt into the same AI conversation. You'll get questions and three options to consider, not a made-up business policy.</p><button type="button" className="tpc-primary" onClick={async()=>{try{await navigator.clipboard.writeText(buildDecisionPrompt(q,profile,bpKey));setCopied(q.id);}catch{setCopied('');}}}>{copied===q.id?'✓ Copied':'Copy planning prompt'}</button></div>}
+      {mode==='help'&&<div className="tpc-ai-help"><strong>✦ Work through this decision with AI</strong><p>Copy this personalized prompt into a new or existing AI conversation. It includes your Business Profile and previously confirmed details. No Business Learning Prompt is needed yet. You'll get questions and three options to consider, not made-up business facts.</p><button type="button" className="tpc-primary" onClick={async()=>{try{await navigator.clipboard.writeText(buildDecisionPrompt(q,profile,bpKey,details));setCopied(q.id);}catch{setCopied('');}}}>{copied===q.id?'✓ Copied':'Copy planning prompt'}</button></div>}
       {mode==='later'?<div className="tpc-note">Marked as undecided. You can return later. This will be flagged in your final submission and won't be treated as an established fact by your AI.</div>:<textarea style={{...st.input,minHeight:100,lineHeight:1.65,resize:'vertical'}} value={v.answer||''} onChange={e=>setAnswer(q.id,'answer',e.target.value)} placeholder={mode==='help'?'After choosing an approach, paste your confirmed decision here.':'Write your actual business details here. Short notes or bullet points are fine.'}/>}
     </div>})}
     <div style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:12,marginTop:26}}><button className="tpc-secondary" onClick={onBack}>← Business Profile</button><button className="tpc-primary" onClick={onNext}>Create my AI Learning Prompt →</button></div>
