@@ -340,6 +340,37 @@ const INTAKE_CSS=`
   .tour-next:hover{filter:brightness(1.1);}
   @keyframes tourPulse{0%{opacity:1;}50%{opacity:0.7;}100%{opacity:1;}}
   .tour-icon{animation:tourPulse 2s ease infinite;}
+  .tpc-mobile-nav-bar{background:#141314;color:#fff;display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid rgba(255,255,255,.10);min-height:62px;}
+  .tpc-nav-trigger{background:#3041F0;color:#fff;border:0;border-radius:999px;padding:12px 17px;font-size:15px;font-weight:600;white-space:nowrap;min-height:44px;cursor:pointer;}
+  .tpc-current-location{font-size:13px;color:rgba(255,255,255,.8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .tpc-mobile-menu{position:absolute;z-index:35;left:0;right:0;top:106px;bottom:72px;background:#141314;color:#fff;display:flex;flex-direction:column;box-shadow:0 15px 35px rgba(0,0,0,.25);}
+  .tpc-menu-heading{padding:17px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.16);font-size:17px;}
+  .tpc-menu-heading button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;width:44px;height:44px;font-size:18px;cursor:pointer;}
+  .tpc-menu-scroll{overflow-y:auto;overscroll-behavior:contain;padding:10px 14px 30px;}
+  .tpc-menu-group-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.65);padding:17px 10px 8px;font-weight:650;}
+  .tpc-menu-link,.tpc-menu-page-btn,.tpc-menu-section{display:flex;align-items:center;width:100%;min-height:45px;text-align:left;border:0;background:transparent;color:rgba(255,255,255,.83);font-size:15px;padding:10px 12px;cursor:pointer;}
+  .tpc-menu-page-btn{justify-content:space-between;border-top:1px solid rgba(255,255,255,.09);font-weight:600;}
+  .tpc-menu-page-btn.current{color:#fff;background:rgba(255,255,255,.11);}
+  .tpc-menu-section{padding-left:26px;gap:12px;color:rgba(255,255,255,.74);}
+  .tpc-menu-section.active{background:#3041F0;color:#fff;font-weight:650;border-radius:10px;}
+  .tpc-menu-dot{width:18px;flex-shrink:0;color:inherit;}
+  .sb-s{color:rgba(255,255,255,.70);}
+  .sb-s.on{color:#fff;background:rgba(48,65,240,.26);font-weight:650;}
+  .sb-s.dn{color:rgba(255,255,255,.62);}
+  .tpc-sidebar-link{color:rgba(255,255,255,.75);}
+  @media(max-width:699px){
+    html,body,#root{width:100%;max-width:100%;overflow-x:hidden;}
+    .tpc-app-root{height:100dvh!important;}
+    .tpc-intake-main{font-size:16px;line-height:1.55;}
+    .tpc-intake-main input,.tpc-intake-main textarea,.tpc-intake-main select{font-size:16px!important;max-width:100%;min-width:0;}
+    input,textarea,select{max-width:100%;font-size:16px!important;}
+    .tpc-intake-main input,.tpc-intake-main select{min-height:48px;}
+    .tpc-intake-main button{min-height:42px;font-size:14px!important;}
+    .tpc-question{padding:16px;}
+    .tpc-choice{min-height:44px;font-size:14px;}
+    .tpc-primary,.tpc-secondary{min-height:44px;font-size:15px;}
+    .tpc-intake-footer>button{min-height:46px;flex:1;font-size:15px!important;}
+  }
 `;
 
 function WC({text,guidance}){
@@ -2135,12 +2166,11 @@ function ProfileStep({profile,setProfile,onNext,bpMeta}){
 }
 
 /* ─── Main Intake ────────────────────────────────────────── */
-function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,onGoToDesign,onGoToDetails,onGoToLearning}){
+function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToProfile,onGoToDesign,onGoToDetails,onGoToLearning,step,setStep,data,setData,done,setDone}){
   const ALL=pages.flatMap(p=>p.sections.map(s=>({...s,page:p})));
-  const[step,setStep]=useState(0);
-  const[data,setData]=useState({});
-  const[done,setDone]=useState(new Set());
   const[ai,setAi]=useState(false);
+  const[mobileNav,setMobileNav]=useState(false);
+  const[expandedPage,setExpandedPage]=useState(null);
   const[submitted,setSubmitted]=useState(false);
   const[submitting,setSubmitting]=useState(false);
   const[error,setError]=useState('');
@@ -2161,8 +2191,9 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
   const get=(sid,fid,def)=>data[sid]?.[fid]??def;
   const next=()=>{setDone(p=>new Set([...p,step]));setAi(false);if(step<total-1)setStep(step+1);};
   const back=()=>{setAi(false);if(step>0)setStep(step-1);};
-  const jump=i=>{setAi(false);setStep(i);};
+  const jump=i=>{setAi(false);setStep(i);setMobileNav(false);};
   const promptText=buildSectionPrompt(cur,profile,data,bpKey,tier,details);
+  useEffect(()=>{if(!isMobile)setMobileNav(false);},[isMobile]);
 
   const handleSubmit=async()=>{
     setSubmitting(true);setError('');setDone(p=>new Set([...p,step]));
@@ -2190,7 +2221,7 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
   return<>
     {showTour&&<TourOverlay bpMeta={bpMeta} onDone={dismissTour} isMobile={isMobile}/>}
     {/* Top header bar */}
-    <div style={{height:50,background:'#141314',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 14px':'0 20px',flexShrink:0}}>
+    <div style={{minHeight:isMobile?54:50,background:'#141314',display:'flex',alignItems:'center',gap:isMobile?8:12,padding:isMobile?'0 16px':'0 20px',flexShrink:0}}>
       {!isMobile&&<span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:14,fontWeight:400,color:'white',letterSpacing:'0.02em'}}>The Blueprint System</span>}
       <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.9)',background:'rgba(255,255,255,0.12)',padding:'3px 8px',borderRadius:12,letterSpacing:'0.04em',textTransform:'uppercase',flexShrink:0}}>{bpMeta.name.replace(' Blueprint','')}</span>
       <div style={{flex:1,height:3,background:'rgba(255,255,255,0.1)',borderRadius:2,overflow:'hidden'}}>
@@ -2199,10 +2230,38 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
       <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'rgba(255,255,255,0.35)',flexShrink:0}}>{done.size}/{total}</span>
       {isMobile&&<button onClick={()=>setShowTour(true)} style={{background:'none',border:'none',color:'rgba(255,255,255,0.4)',fontSize:16,cursor:'pointer',padding:'0 4px',flexShrink:0}} title="Show tour">?</button>}
     </div>
-    {/* Mobile section indicator */}
-    {isMobile&&<div style={{background:'#0d0c0d',borderBottom:'1px solid rgba(255,255,255,0.06)',padding:'7px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
-      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)'}}>{cur.page.name}</span>
-      <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:11,letterSpacing:'0.02em',color:'rgba(255,255,255,0.55)'}}>{cur.name.replace(' [Elevate]','').replace(' [New]','').substring(0,32)}</span>
+    {/* Mobile page and section navigation */}
+    {isMobile&&<div className="tpc-mobile-nav-bar">
+      <button type="button" className="tpc-nav-trigger" onClick={()=>{setMobileNav(v=>!v);setExpandedPage(cur.page.id);}} aria-expanded={mobileNav} aria-controls="tpc-mobile-pages">☰ &nbsp; Pages &amp; sections</button>
+      <span className="tpc-current-location">{cur.page.name} / {cur.name.replace(' [Elevate]','').replace(' [New]','')}</span>
+    </div>}
+    {isMobile&&mobileNav&&<div className="tpc-mobile-menu" id="tpc-mobile-pages" role="navigation" aria-label="Jump to any page or section">
+      <div className="tpc-menu-heading"><strong>Go to a page or section</strong><button type="button" onClick={()=>setMobileNav(false)} aria-label="Close navigation">✕</button></div>
+      <div className="tpc-menu-scroll">
+        <div className="tpc-menu-group-label">Getting started</div>
+        <button className="tpc-menu-link" onClick={()=>{setMobileNav(false);onGoToProfile();}}>Business Profile</button>
+        {ACTIVE_BLUEPRINTS.includes(bpKey)&&<>
+          <button className="tpc-menu-link" onClick={()=>{setMobileNav(false);onGoToDetails();}}>Business Details</button>
+          <button className="tpc-menu-link" onClick={()=>{setMobileNav(false);onGoToLearning();}}>AI Learning Prompt</button>
+        </>}
+        <button className="tpc-menu-link" onClick={()=>{setMobileNav(false);onGoToDesign();}}>Design Preferences</button>
+        <div className="tpc-menu-group-label">Website content</div>
+        {pages.map(pg=>{
+          const first=ALL.findIndex(s=>s.page.id===pg.id);
+          const isExpanded=expandedPage===pg.id;
+          return <div key={pg.id} className="tpc-menu-page">
+            <button type="button" className={'tpc-menu-page-btn'+(cur.page.id===pg.id?' current':'')} onClick={()=>setExpandedPage(isExpanded?null:pg.id)} aria-expanded={isExpanded}>
+              <span>{pg.num} &nbsp; {pg.name}</span><span>{isExpanded?'−':'+'}</span>
+            </button>
+            {isExpanded&&<div className="tpc-menu-sections">{pg.sections.map(sec=>{
+              const idx=ALL.findIndex(s=>s.id===sec.id&&s.page.id===pg.id);
+              return <button key={sec.id} type="button" className={'tpc-menu-section'+(idx===step?' active':'')} onClick={()=>jump(idx)} aria-current={idx===step?'step':undefined}>
+                <span className="tpc-menu-dot">{done.has(idx)?'✓':'•'}</span><span>{sec.name.replace(' [Elevate]','').replace(' [New]','')}</span>
+              </button>;
+            })}</div>}
+          </div>;
+        })}
+      </div>
     </div>}
     <div style={{flex:1,display:'flex',overflow:'hidden'}}>
       {/* Sidebar — desktop only */}
@@ -2241,7 +2300,7 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
         })}
       </div>}
       {/* Main content area */}
-      <div style={{flex:1,overflowY:'auto',padding:isMobile?'18px 16px 100px':'26px 34px 40px',background:'#FCF9F5'}}>
+      <div key={step} className="tpc-intake-main" style={{flex:1,minWidth:0,overflowY:'auto',padding:isMobile?'22px 18px 42px':'26px 34px 40px',background:'#FCF9F5'}}>
         {!isMobile&&<div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color}}>
           Page {cur.page.num} — {cur.page.name}
         </div>}
@@ -2274,12 +2333,12 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
         {error&&<div style={{marginTop:16,padding:'10px 14px',background:'rgba(48,65,240,0.06)',borderLeft:'2px solid #3041F0',borderRadius:12,fontSize:13,color:'#3041F0'}}>{error}</div>}
       </div>
     </div>
-    <div style={{height:isMobile?64:60,background:'#fff',borderTop:'1px solid rgba(20,19,20,0.12)',display:'flex',alignItems:'center',justifyContent:'space-between',padding:isMobile?'0 16px':'0 34px',flexShrink:0,position:isMobile?'sticky':'static',bottom:0,zIndex:10}}>
-      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:'#141314',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
+    <div className="tpc-intake-footer" style={{minHeight:isMobile?72:60,background:isMobile?'#141314':'#fff',borderTop:'1px solid rgba(20,19,20,0.12)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,padding:isMobile?'10px 16px':'0 34px',flexShrink:0,position:'relative',zIndex:10}}>
+      <button onClick={back} disabled={step===0||submitting} style={{background:'none',color:isMobile?'#fff':'#141314',border:isMobile?'1px solid rgba(255,255,255,0.75)':'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:isMobile?'12px 18px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,cursor:step===0?'not-allowed':'pointer',opacity:step===0?0.35:1}}>← Back</button>
       {!isMobile&&<span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,color:'#7A7069'}}>{cur.page.name}</span>}
       {step<total-1
-        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
-        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#7A7069':bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'9px 14px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
+        ?<button onClick={next} style={{background:bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'12px 18px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?13:13.5,fontWeight:500,cursor:'pointer'}}>Next →</button>
+        :<button onClick={handleSubmit} disabled={submitting} style={{background:submitting?'#7A7069':bpMeta.color,color:'#fff',border:'none',borderRadius:9999,padding:isMobile?'12px 16px':'8px 20px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:isMobile?12.5:13.5,fontWeight:500,cursor:submitting?'not-allowed':'pointer',transition:'background 0.2s'}}>
           {submitting?'Sending…':'Submit content ✓'}
         </button>}
     </div>
@@ -2292,6 +2351,10 @@ export default function App(){
   const[profile,setProfile]=useState({});
   const[details,setDetails]=useState({});
   const[design,setDesign]=useState({paletteId:'A',fontId:'A'});
+  // Keep content answers and current section alive when navigating to profile, details or design.
+  const[step,setStep]=useState(0);
+  const[data,setData]=useState({});
+  const[done,setDone]=useState(new Set());
   const driveUrl=getParam('drive');
   const bpKey=getParam('blueprint')||'quote';
   const tier=getParam('tier')||'emerge';
@@ -2299,6 +2362,9 @@ export default function App(){
   const pages=getBlueprintPages(bpKey,tier);
 
   useEffect(()=>{
+    let viewport=document.querySelector('meta[name="viewport"]');
+    if(!viewport){viewport=document.createElement('meta');viewport.name='viewport';document.head.appendChild(viewport);}
+    viewport.setAttribute('content','width=device-width, initial-scale=1');
     document.documentElement.style.setProperty('--bp-color',bpMeta.color);
   },[]);
 
@@ -2311,13 +2377,13 @@ export default function App(){
 
   return<>
     <style>{FONTS+INTAKE_CSS}</style>
-    <div style={{height:'100vh',display:'flex',flexDirection:'column'}}>
+    <div className="tpc-app-root" style={{height:'100dvh',minHeight:0,display:'flex',flexDirection:'column'}}>
       {screen==='landing'&&<LandingPage onStart={()=>setScreen('profile')} driveUrl={driveUrl} bpMeta={bpMeta} tier={tier} onGenerator={()=>setScreen('generator')}/>}
       {screen==='profile'&&<><Header/><div style={{flex:1,overflowY:'auto'}}><ProfileStep profile={profile} setProfile={setProfile} onNext={()=>setScreen(ACTIVE_BLUEPRINTS.includes(bpKey)?'details':'learning')} bpMeta={bpMeta}/></div></>}
       {screen==='details'&&<><Header/><BusinessDetailsStep profile={profile} details={details} setDetails={setDetails} bpKey={bpKey} bpMeta={bpMeta} onBack={()=>setScreen('profile')} onNext={()=>setScreen('learning')}/></>}
       {screen==='learning'&&<><Header/><LearningStep profile={profile} details={details} bpKey={bpKey} tier={tier} bpMeta={bpMeta} onBack={()=>setScreen(ACTIVE_BLUEPRINTS.includes(bpKey)?'details':'profile')} onNext={()=>setScreen('design')}/></>}
       {screen==='design'&&<><Header/><div style={{flex:1,overflowY:'auto',display:'flex',flexDirection:'column'}}><DesignStep bpKey={bpKey} bpMeta={bpMeta} design={design} setDesign={setDesign} onNext={()=>setScreen('intake')} onBack={()=>setScreen('profile')}/></div></>}
-      {screen==='intake'&&<Intake profile={profile} details={details} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier} design={design} onGoToProfile={()=>setScreen('profile')} onGoToDetails={()=>setScreen('details')} onGoToLearning={()=>setScreen('learning')} onGoToDesign={()=>setScreen('design')}/>}
+      {screen==='intake'&&<Intake profile={profile} details={details} driveUrl={driveUrl} bpMeta={bpMeta} pages={pages} bpKey={bpKey} tier={tier} design={design} onGoToProfile={()=>setScreen('profile')} onGoToDetails={()=>setScreen('details')} onGoToLearning={()=>setScreen('learning')} onGoToDesign={()=>setScreen('design')} step={step} setStep={setStep} data={data} setData={setData} done={done} setDone={setDone}/>}
     </div>
   </>;
 }
