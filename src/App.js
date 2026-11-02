@@ -239,46 +239,137 @@ const AI_SECTION_GUIDES={
   email_mktg:['Write accurate email opt-in copy based on the intended content and frequency.',3],
   abandoned_cart:['Write a reminder only after confirming timing, permission, and workflow.',3],
 };
+// Only show AI help where it genuinely supports the task in this section.
+const SECTION_NO_AI=new Set(['formfields','custom_qs','inqform','revs_e']);
 function sectionAIPlan(sec){
+  if(SECTION_NO_AI.has(sec.id))return null;
+  if(sec.id==='revs'||/reviews|testimonials/i.test(sec.name))return {kind:'reviews'};
+  if(sec.id==='story'||/our story|my story|your story/i.test(sec.name))return {kind:'story'};
+  if(['faq','svcfaq','idx_faq','invfaq'].includes(sec.id)||/\bfaq\b/i.test(sec.name))return {kind:'faq'};
+  if(sec.id==='trustnote')return {kind:'trustnote'};
+  if(sec.id==='after_submit')return {kind:'after_submit'};
   if(NO_AI_SECTIONS.has(sec.id))return null;
   const guide=AI_SECTION_GUIDES[sec.id];
-  if(!guide)return null; // Never fall back to generic marketing instructions.
-  if(!sec.fields.some(f=>f.type!=='upnote'))return null;
-  return {task:guide[0],count:guide[1]};
+  return guide?{kind:'copy',task:guide[0],count:guide[1]}:null;
+}
+function sectionExisting(sec,data){
+  return (sec.fields||[]).filter(f=>f.type!=='upnote').map(f=>{
+    const v=data[sec.id]?.[f.id];
+    if(v===undefined||v===null||v==='')return null;
+    if(Array.isArray(v)){
+      const entries=v.map((item,i)=>typeof item==='object'
+        ?`${i+1}. ${Object.entries(item).map(([k,x])=>`${k}: ${x||'(not entered)'}`).join(' | ')}`
+        :`${i+1}. ${item}`).join('\n');
+      return entries?`${f.label}:\n${entries}`:null;
+    }
+    return `${f.label}: ${String(v)}`;
+  }).filter(Boolean).join('\n\n');
 }
 function buildSectionPrompt(sec,profile,data,bpKey,tier,details={}){
   const plan=sectionAIPlan(sec);
   if(!plan)return '';
-  const fields=sec.fields.filter(f=>f.type!=='upnote');
-  const specs=fields.map(f=>{
-    const detail=f.type==='cards'?` For each ${f.lbl||'item'} include: ${f.subs.map(x=>x.label+(x.guidance?' ('+x.guidance+')':'')).join('; ')}. ${f.min||1}–${f.max||5} items.`:
-      f.type==='rep'?` ${f.min||1}–${f.max||8} items.`:'';
-    return `- ${f.label}${f.guidance?' ('+f.guidance+')':''}.${detail}`;
-  }).join('\n');
-  const existing=fields.map(f=>{
-    const v=data[sec.id]?.[f.id];
-    return v && (typeof v==='string'?v.trim():Array.isArray(v)&&v.length)?`${f.label}: ${JSON.stringify(v)}`:null;
-  }).filter(Boolean).join('\n');
-  const operational=detailQuestions(bpKey).map(q=>{
+  const meta=BP_META[bpKey]||BP_META.quote;
+  const context=`Continue in the same AI conversation where I shared my Business Learning Prompt. Use the real facts I provided about my business, services, customers and writing voice. The website's primary action is "${meta.cta}". Do not ask me to repeat my business profile.`;
+  const existing=sectionExisting(sec,data);
+  const facts=detailQuestions(bpKey).map(q=>{
     const v=details[q.id]||{};
     return v.mode!=='later'&&v.answer?.trim()?`${q.label}: ${v.answer.trim()}`:null;
   }).filter(Boolean).join('\n');
-  const output=plan.count===1
-    ?'Produce ONE accurate, structured draft. Do not manufacture alternative facts or policies.'
-    :`Give ${plan.count} meaningfully different, COMPLETE options. Include every requested field in each option, then recommend the clearest option with a short reason.`;
-  return `Continue in the SAME AI conversation where I shared my Business Learning Prompt. Use my confirmed business profile, customer, and voice. Do not ask me to paste it again.
+  const preface=`${context}\n\nPAGE: ${sec.page.name}\nSECTION: ${sec.name}\n`;
+  if(plan.kind==='reviews'){
+    return `${preface}
+I want help EDITING REAL CUSTOMER REVIEWS, not generating reviews.
 
-PAGE: ${sec.page.name}
-SECTION: ${sec.name}
-YOUR SPECIFIC TASK
+FIRST: Review the actual review text I have entered below. If I have not entered any, ask me to paste my genuine reviews before doing anything else. Do not create sample reviews, fictional customer names, or invented experiences.
+
+MY EXISTING REVIEWS
+${existing||'(I have not entered any reviews yet.)'}
+
+YOUR EDITING JOB
+For each supplied review, preserve the customer's meaning, tone, specific details and level of enthusiasm. Correct spelling and punctuation, improve readability, and trim repetition. Never add claims, results, locations or praise that the reviewer did not actually say. Show the original and a lightly edited version side by side, plus a short note on what changed. Identify the strongest authentic sentence for display if helpful.
+
+IMPORTANT: These are the customer's words, not mine. Any substantive changes must be approved by the reviewer before publication. If I have no reviews yet, help me decide how to request honest feedback, but do not write fake testimonials. Keep the original attribution only if I have permission to publish it.`;
+  }
+  if(plan.kind==='story'){
+    const storyField=sec.fields.find(f=>/story/i.test(f.id)||/story/i.test(f.label));
+    const length=storyField?.guidance||'the length specified in my content guide';
+    return `${preface}
+Help me tell MY REAL STORY in a natural, cohesive way. I want it to sound like me, not like a generic founder biography.
+
+WHAT I HAVE ALREADY WRITTEN
+${existing||'(I have not written my story in the form yet.)'}
+
+START HERE
+If I already entered a story, first identify its strongest details and ask only for information that would materially improve it. If my story field is empty, ask me up to five thoughtful questions, one conversational batch, about how I started, what drew me to this work, relevant experiences or turning points, why this work matters to me, and what I want clients to understand about my approach. Make it clear that I can skip personal details I do not want to share.
+
+THEN
+Use MY answers to write three cohesive versions with different emphases: personal and warm, direct and professional, and story-led. Aim for ${length}. Keep events, dates, qualifications and motivations accurate. Do not invent an inspirational turning point, struggle, client result or personal detail. Recommend the version that sounds most authentic and explain why. Output the finished copy under "${storyField?.label||'Our story'}" so I can paste it into the form.`;
+  }
+  if(plan.kind==='faq'){
+    const faqField=sec.fields.find(f=>f.type==='cards');
+    const existingFAQ=(data[sec.id]?.[faqField?.id]||[]).filter(item=>item&&((item.q||'').trim()||(item.a||'').trim()));
+    const faqText=existingFAQ.length?existingFAQ.map((item,i)=>`${i+1}. Q: ${item.q||'(question missing)'}\nA: ${item.a||'(answer missing)'}`).join('\n\n'):'(No FAQs entered yet)';
+    return `${preface}
+Help me improve my FAQ section using my actual business details and the questions my customers are likely to ask.
+
+STEP 1: WORK WITH MY EXISTING FAQs
+I was instructed to enter any questions and answers I already have into the questionnaire BEFORE copying this prompt. Here is what I entered:
+${faqText}
+
+First, lightly edit any existing answers for clarity, accuracy and usefulness without changing their meaning. Do not duplicate, delete or replace existing questions.
+
+STEP 2: FIND THE MISSING QUESTIONS
+Based on my actual services, audience, buying process, and the purpose of this ${sec.page.name} page, suggest up to 12 ADDITIONAL questions that a real prospective customer is likely to ask, EXCLUDING any questions I already entered or close variations of them. Prioritize the questions that help visitors decide whether to work with me, understand the service, and take the next step.
+
+${facts?`CONFIRMED BUSINESS DETAILS TO USE\n${facts}\n\n`:''}For each new question, draft an answer ONLY when confirmed information supports it. If the answer depends on an undecided policy, price, service limit or timeframe, write "Needs your answer" and ask me the specific missing fact. Do not make up FAQs to reach a quota.
+
+OUTPUT
+A. My existing FAQs, refined (if provided).
+B. Additional nonduplicative FAQ suggestions, numbered, each with Question and Answer.
+C. A short list of facts I need to confirm before publishing.
+
+Keep answers concise and customer-friendly. I will choose which suggestions to add using the Add another button in my content guide.`;
+  }
+  if(plan.kind==='trustnote'){
+    return `${preface}
+I need ONE short reassurance note directly below my quote request form. Its job is to reduce uncertainty about submitting a request, NOT to sell my services again.
+
+Use my confirmed quote process to determine which concern the note can truthfully address: whether submitting commits the customer to anything, whether the estimate costs money, how incomplete requests are handled, or when the customer can expect a response.
+
+${facts?`MY CONFIRMED BUSINESS DETAILS\n${facts}\n\n`:''}${existing?`MY DRAFT NOTE\n${existing}\n\n`:''}First tell me which of those facts are actually confirmed. If no useful reassurance fact is confirmed, ask me what happens after a quote request before writing.
+
+Then give me THREE different reassurance notes, each 15–30 words, with a distinct focus and a short reason for your strongest recommendation. Do not assume quotes are free, no-obligation, same-day, or guaranteed. Label each result "Reassurance note" so I can paste it into that field.`;
+  }
+  if(plan.kind==='after_submit'){
+    return `${preface}
+I need to explain the REAL process after someone submits the ${sec.page.name} form. This is operational guidance, not a promotional headline.
+
+${facts?`WHAT I HAVE ALREADY CONFIRMED ABOUT MY BUSINESS\n${facts}\n\n`:''}${existing?`WHAT I ALREADY ENTERED IN THIS SECTION\n${existing}\n\n`:''}Check whether these specific steps are established: (1) how I receive and review a submission, (2) whether I check for missing details, (3) whether and how I contact the customer, (4) when I can realistically respond, and (5) what happens next, such as a quote, call, approval, or booking.
+
+If an essential step is missing, ask only about those missing steps and WAIT for my answer. Do not invent a response-time promise.
+
+Once confirmed, produce ONLY the actual fields for this section, with their exact labels:
+${sec.fields.filter(f=>f.type!=='upnote').map(f=>`- ${f.label}${f.guidance?' ('+f.guidance+')':''}`).join('\n')}
+
+Make the process clear and chronological, and explain what the visitor should expect. Do not add extra steps or policies.`;
+  }
+  const fields=sec.fields.filter(f=>f.type!=='upnote');
+  const specs=fields.map(f=>{
+    const detail=f.type==='cards'?` Include ${f.min||1}–${f.max||5} items, each with ${f.subs.map(x=>x.label).join(', ')}.`:
+      f.type==='rep'?` Include ${f.min||1}–${f.max||8} items.`:'';
+    return `- ${f.label}${f.guidance?' ('+f.guidance+')':''}.${detail}`;
+  }).join('\n');
+  return `${preface}
+YOUR WRITING ASSIGNMENT
 ${plan.task}
 
-FIELDS I NEED TO COMPLETE (USE THESE EXACT LABELS)
+MY CURRENT DRAFT
+${existing||'(Nothing entered yet)'}
+
+${facts?`RELEVANT CONFIRMED BUSINESS DETAILS\n${facts}\n\n`:''}Write ${plan.count===1?'one carefully structured, accurate version':`${plan.count} distinct versions`} for these fields:
 ${specs}
 
-${operational?'CONFIRMED BUSINESS DETAILS\n'+operational+'\n\n':''}${existing?'MY CURRENT NOTES / DRAFT ANSWERS\n'+existing+'\n\n':''}OUTPUT INSTRUCTIONS
-${output}
-Match the requested lengths. Use only my confirmed services, prices, policies, experience, and processes. Never invent reviews, guarantees, credentials, results, response times, or other facts. If an essential fact is missing, ask up to three focused questions BEFORE drafting. Otherwise draft directly. Make the answer easy to paste into these exact fields, not a generic website article.`;
+Use my actual information and match the word counts. If something essential is unknown, ask a question about THAT missing fact before drafting. Do not invent business claims. Label the output with the field names so I can paste my chosen version into the guide.`;
 }
 
 function LearningStep({profile,details,bpKey,tier,bpMeta,onBack,onNext}){
@@ -549,7 +640,7 @@ const QUOTE_EMERGE=[
       ]},
     {id:'revs',name:'Testimonials',sub:'Social proof',
       why:'Reviews mentioning a specific service, result, or location are the most credible.',
-      fields:[{id:'revlist',label:'Reviews',type:'cards',guidance:'3 reviews · 40–100 words each',min:3,max:3,lbl:'Review',subs:[{id:'text',label:'Review text',ph:'Full review — prioritize ones mentioning a specific service, result, or location.',guidance:'40–100 words',multi:true},{id:'rname',label:'Reviewer first name',ph:'e.g. Mike',guidance:''},{id:'city',label:'City or neighborhood',ph:'e.g. Cedar Park',guidance:''}]}]},
+      fields:[{id:'revlist',label:'Reviews',type:'cards',guidance:'Add real reviews you have permission to share (optional)',min:1,max:10,lbl:'Review',subs:[{id:'text',label:'Review text',ph:'Full review — prioritize ones mentioning a specific service, result, or location.',guidance:'40–100 words',multi:true},{id:'rname',label:'Reviewer first name',ph:'e.g. Mike',guidance:''},{id:'city',label:'City or neighborhood',ph:'e.g. Cedar Park',guidance:''}]}]},
     {id:'homecta',name:'Closing CTA',sub:'The final push',
       why:'Make the next step obvious and frictionless.',
       fields:[
@@ -592,7 +683,7 @@ const QUOTE_EMERGE=[
       fields:[{id:'svcs',label:'Services',type:'cards',guidance:'2–5 services',min:2,max:5,lbl:'Service',subs:[{id:'name',label:'Service name',ph:'e.g. Full Lawn Maintenance',guidance:'3–6 words'},{id:'scope',label:'Scope description',ph:'What is specifically included.',guidance:'40–80 words',multi:true}]}]},
     {id:'faq',name:'FAQ',sub:'Common questions answered',
       why:'FAQs handle objections before the visitor has to ask.',
-      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–6 questions',min:3,max:6,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do you provide free estimates?',guidance:''},{id:'a',label:'Answer',ph:'Direct, specific answer.',guidance:'30–80 words',multi:true}]}]},
+      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do you provide free estimates?',guidance:''},{id:'a',label:'Answer',ph:'Direct, specific answer.',guidance:'30–80 words',multi:true}]}]},
     {id:'svccta',name:'Closing CTA',sub:'',
       why:'Make the next step obvious.',
       fields:[
@@ -709,7 +800,7 @@ const QUOTE_ELEVATE=[
     {id:'idx_cards',name:'Services grid',sub:'Cards linking to individual pages',
       why:'Give just enough detail to help visitors choose which individual service page to explore.',
       fields:[{id:'cards',label:'Service cards',type:'cards',guidance:'One card per service',min:2,max:6,lbl:'Service',subs:[{id:'name',label:'Service name',ph:'',guidance:''},{id:'teaser',label:'1–2 sentence teaser',ph:'Who it is for and what result it produces.',guidance:'20–35 words',multi:true}]}]},
-    {id:'idx_faq',name:'General FAQ',sub:'',fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–5 questions',min:3,max:5,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–60 words',multi:true}]}]},
+    {id:'idx_faq',name:'General FAQ',sub:'',fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–60 words',multi:true}]}]},
     {id:'idx_cta',name:'Closing CTA',sub:'',fields:[
       {id:'headline',label:'CTA headline',type:'text',guidance:'6–12 words',ph:'e.g. Not sure which service you need? Get a free quote.'},
       {id:'btn',label:'Button text',type:'text',guidance:'3–5 words',ph:'Get a Free Quote'},
@@ -724,7 +815,7 @@ const QUOTE_ELEVATE=[
       {id:'headline',label:'Page headline',type:'text',guidance:'8–16 words',ph:''},
       {id:'whofor',label:'Who it is for',type:'textarea',guidance:'40–80 words',ph:'Specific description of the right client.'},
       {id:'scope',label:'What is included',type:'textarea',guidance:'50–100 words',ph:'Everything covered. Be specific.'},
-      {id:'faq',label:'Service-specific FAQ',type:'cards',guidance:'2–4 questions',min:2,max:4,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
+      {id:'faq',label:'Service-specific FAQ',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
       {id:'cta',label:'Page CTA headline',type:'text',guidance:'6–12 words',ph:'e.g. Ready to get started? Get a free quote today.'},
     ]},
     {id:'isvc2',name:'Service 2 — full detail',sub:'Same structure as Service 1',fields:[
@@ -832,7 +923,7 @@ const CONSULTATION_EMERGE=[
     {id:'faq',name:'FAQ',sub:'',
       why:'FAQs about process, timeline, and how you work reduce friction before the first call.',
       prompt:(p)=>`I am a ${p.type||'[profession]'} at ${p.biz||'[business]'}. Questions I get most often before booking: [list 4–6]. Write conversational FAQ answers, 2–4 sentences each. Honest, specific. Tone: ${p.tone||'warm, helpful'}.`,
-      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–6 questions',min:3,max:6,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. How long does a coaching engagement typically last?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–80 words',multi:true}]}]},
+      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. How long does a coaching engagement typically last?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–80 words',multi:true}]}]},
     {id:'svccta',name:'Closing CTA',sub:'',
       why:'Visitors who have read through your services are ready to act.',
       fields:[
@@ -939,7 +1030,7 @@ const CONSULTATION_ELEVATE=[
     {id:'idx_cards',name:'Services grid',sub:'Cards linking to individual pages',
       why:'Just enough detail to help visitors choose which individual page to explore.',
       fields:[{id:'cards',label:'Service cards',type:'cards',guidance:'One card per service',min:2,max:6,lbl:'Service',subs:[{id:'name',label:'Service name',ph:'',guidance:''},{id:'teaser',label:'1–2 sentence teaser',ph:'Who it is for and what it helps them achieve.',guidance:'20–35 words',multi:true}]}]},
-    {id:'idx_faq',name:'General FAQ',sub:'Questions across all services',fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–5 general questions',min:3,max:5,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. How do I know which service is right for me?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–60 words',multi:true}]}]},
+    {id:'idx_faq',name:'General FAQ',sub:'Questions across all services',fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. How do I know which service is right for me?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–60 words',multi:true}]}]},
     {id:'idx_cta',name:'Closing CTA',sub:'',fields:[
       {id:'headline',label:'CTA headline',type:'text',guidance:'6–14 words',ph:'e.g. Still not sure where to start? Let\'s talk — that\'s what the discovery call is for.'},
       {id:'btn',label:'Button text',type:'text',guidance:'3–6 words',ph:'Book a Free Call'},
@@ -955,7 +1046,7 @@ const CONSULTATION_ELEVATE=[
       {id:'whofor',label:'Who this is for',type:'textarea',guidance:'40–80 words',ph:'Specific description of the right client — the more specific, the better.'},
       {id:'whats',label:'What is included',type:'textarea',guidance:'50–100 words',ph:'Sessions, deliverables, access, timeline.'},
       {id:'howworks',label:'How it works',type:'cards',guidance:'3–4 steps',min:3,max:4,lbl:'Step',subs:[{id:'title',label:'Step title',ph:'e.g. Discovery call',guidance:'3–5 words'},{id:'desc',label:'Description',ph:'',guidance:'15–30 words',multi:true}]},
-      {id:'faq',label:'FAQ',type:'cards',guidance:'2–4 service-specific questions',min:2,max:4,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
+      {id:'faq',label:'FAQ',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
       {id:'cta',label:'CTA headline',type:'text',guidance:'6–14 words',ph:''},
     ]},
     {id:'isvc2',name:'Service 2 — full detail',sub:'Same structure',fields:[
@@ -1059,7 +1150,7 @@ const BOOKING_EMERGE=[
       ]},
     {id:'svcfaq',name:'FAQ',sub:'Common pre-booking questions',
       why:'Answer the questions that keep people from booking.',
-      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'3–5 questions',min:3,max:5,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do I need to prepare anything before my appointment?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]}]},
+      fields:[{id:'faqs',label:'FAQ items',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do I need to prepare anything before my appointment?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]}]},
     {id:'after_submit',name:'What happens after submission?',sub:'Your actual follow-up process',
       why:'Not every business uses a scheduler or booking tool. Tell Victoria how you actually follow up with people who reach out — she will build the conversion experience around your real process.',
       fields:[
@@ -1161,7 +1252,7 @@ const BOOKING_ELEVATE=[
       {id:'name',label:'Service name',type:'text',ph:''},{id:'headline',label:'Page headline',type:'text',guidance:'8–16 words',ph:''},
       {id:'desc',label:'Full service description',type:'textarea',guidance:'80–150 words',ph:'Who it is for, what happens, preparation instructions, what the result looks like.'},
       {id:'duration',label:'Duration',type:'text',ph:''},{id:'price',label:'Price',type:'text',ph:''},
-      {id:'faq',label:'Service-specific FAQ',type:'cards',guidance:'2–4 questions',min:2,max:4,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
+      {id:'faq',label:'Service-specific FAQ',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'20–60 words',multi:true}]},
       {id:'cta',label:'Booking CTA text',type:'text',guidance:'3–5 words',ph:'e.g. Book This Service'},
     ]},
     {id:'isvc2',name:'Service 2 — full detail',sub:'Same structure',fields:[
@@ -1391,7 +1482,7 @@ const INQUIRY_ELEVATE=[
     {id:'invfaq',name:'Investment FAQ',sub:'Booking, payment, deposit questions',
       why:'Answering these here makes the inquiry conversation more productive.',
       prompt:(p)=>`I am a ${p.type||'[profession]'} at ${p.biz||'[business]'}. Questions about my booking process and payment: [list them]. Write conversational FAQ answers, 2–4 sentences each. Honest and specific.`,
-      fields:[{id:'faqs',label:'Investment FAQ',type:'cards',guidance:'3–5 questions',min:3,max:5,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do you offer payment plans?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–80 words',multi:true}]}]},
+      fields:[{id:'faqs',label:'Investment FAQ',type:'cards',guidance:'Up to 12 questions (add only what is useful)',min:1,max:12,lbl:'Question',subs:[{id:'q',label:'Question',ph:'e.g. Do you offer payment plans?',guidance:''},{id:'a',label:'Answer',ph:'',guidance:'30–80 words',multi:true}]}]},
     {id:'invcta',name:'Investment page CTA',sub:'Warm closing',
       why:'A visitor who has read the entire Investment page and is still here is a pre-qualified lead.',
       fields:[
@@ -2403,8 +2494,11 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
           <span style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:bpMeta.color,display:'block',marginBottom:4}}>Why it matters</span>
           {cur.why}
         </div>}
+        {sectionAIPlan(cur)?.kind==='faq'&&<div className="tpc-note">Start by adding any questions and answers you already have in the fields below. Then open the optional AI prompt. It will use your existing FAQs and suggest additional questions without repeating them. You can add up to 12 FAQs here.</div>}
+        {sectionAIPlan(cur)?.kind==='reviews'&&<div className="tpc-note">Enter your genuine customer reviews below first. The optional AI prompt can help refine their wording for clarity, not create new reviews. Get the reviewer's approval for substantive edits before publishing.</div>}
+        {sectionAIPlan(cur)?.kind==='story'&&<div className="tpc-note">Write a few rough notes about how you started, what drew you to the work, and why you do it. The optional AI prompt can help shape your own story into finished copy.</div>}
         {promptText&&<div style={{marginTop:4}}>
-          <div style={{fontSize:13,marginBottom:9,color:'#7A7069'}}>Optional: get AI help tailored to this section, then review and paste your final wording below. You can always write it yourself.</div><button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
+          <div style={{fontSize:13,marginBottom:9,color:'#7A7069'}}>Optional: use AI to work on this specific section, or complete the fields yourself. For FAQs and reviews, enter your existing content below before copying the prompt.</div><button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
             ✦ {aiPlan?.count===1?'Help me prepare this section':'Help me write this section'} {ai?'↑':'↓'}
           </button>
           {ai&&<div style={{background:'#141314',borderRadius:20,padding:14,marginTop:9}}>
