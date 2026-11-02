@@ -174,24 +174,113 @@ function buildLearningPrompt(profile,bpKey,tier,details={}){
   const detailFacts=detailQuestions(bpKey).map(q=>{const v=details[q.id]||{};return `${q.label}: ${v.mode==='later'?'UNDECIDED — do not assume an answer':v.answer?.trim()||'NOT CONFIRMED — ask before using'}`;}).join('\n');
   return `You are my website content writing partner. I am creating the content for my ${meta.name} website through The Blueprint System (${tier==='elevate'?'Elevate':'Emerge'}). The website is built to help the right visitor take one main action: ${meta.cta}.\n\nFIRST, LEARN MY BUSINESS\n${facts}\n\nMY BUSINESS OPERATIONS AND SERVICES\n${detailFacts}\n\nHOW TO USE THIS CONTEXT\n1. Treat these details as the reference for every website-writing request I send in this same conversation. You will receive a series of section-specific prompts, one at a time. They will tell you the page, section, purpose, fields, length, and desired call to action.\n2. Use my actual audience, services, location, differentiators, and voice. Write clear, natural, specific website copy, not generic advertising language. Do not invent credentials, testimonials, client outcomes, prices, policies, guarantees, statistics, availability, or service details.\n3. When a later prompt lacks information essential for an accurate answer, ask up to three focused questions before drafting. If a detail is optional, use a clearly labeled [confirm this detail] placeholder rather than guessing.\n4. Keep the primary action (${meta.cta}) consistent and make the next step easy to understand. Explain what visitors need to know, why they can trust me, and what happens after they act. Avoid exaggerated promises.\n5. Follow the requested word counts and output fields in each later prompt. Give copy that I can paste directly into the matching content-guide fields, using those field labels as headings. Do not rewrite other sections unless asked.\n6. I will review and edit everything for accuracy and to make it sound like me. Do not claim you have independently verified my information.\n\nFor now, DO NOT write my website copy. Briefly confirm what you understand about my business, my audience, the website's main action, and my preferred tone. Then tell me you are ready for my first section prompt.`;
 }
+
+// A section receives AI assistance only when it has a specific, useful task.
+const NO_AI_SECTIONS=new Set('photos gallphotos images_note creds svcarea contarea phone social social_setup contactform scheduler tax shippingmethod carriers processing fulfillment privacy returns basics productlist extra_prods collections gifting discounts brand video credentials revs revs_e proof testimonials revpage portgrid portcat1 portcat2 portcat3 portidx gall_e press team blogpage blog_teaser featprods choice'.split(' '));
+const AI_SECTION_GUIDES={
+  formfields:['Help me decide which quote-request form questions are essential for an accurate estimate, using my confirmed services and quote factors. Separate required from optional fields, and explain why each is necessary. Do not write promotional copy or invent prices, turnaround times, or policies.',1],
+  inqform:['Help me plan project inquiry questions that reveal project type, scope, budget, and timing where relevant. Keep the form manageable, distinguish required from optional fields, and do not invent qualification rules.',1],
+  custom_qs:['Review the confirmed service process and suggest only useful additional form questions that are not already collected. Explain what decision each question supports. If none are necessary, say so.',1],
+  hero:['Create an opening that clearly identifies the actual service, customer, and value, with a next step.',5],
+  abouthero:['Introduce the real founder story, values, and customer connection without inventing background.',5],
+  svchero:['Introduce confirmed services and help visitors identify the right offering.',5],
+  quotehero:['Explain what visitors can request a quote for and why complete project information matters.',5],
+  bookhero:['Explain the actual consultation or appointment and what visitors can expect.',5],
+  inquirehero:['Introduce the types of projects welcomed and invite qualified inquiries.',5],
+  conthero:['Clarify when to contact the business and when to use its primary action.',5],
+  idx_hero:['Introduce the service index and guide visitors toward the appropriate confirmed service.',5],
+  trust:['Condense genuine, verifiable trust signals. If none are available, suggest what evidence the owner could gather instead of inventing claims.',3],
+  svc_ov:['Create concise cards for services already confirmed in Business Details. Do not add offerings.',3],
+  svc_prev:['Summarize confirmed services and help visitors compare them.',3],
+  idx_cards:['Organize confirmed services into distinct, easy-to-compare cards.',3],
+  svclist:['Describe each actual service, its scope, and who it is for, without inventing inclusions.',3],
+  svcdetail:['Describe bookable services with confirmed duration, price, inclusions, and selection guidance.',3],
+  isvc1:['Explain the first confirmed service in depth, including fit, scope, and next step.',3],
+  isvc2:['Explain the second confirmed service in depth, including fit, scope, and next step.',3],
+  isvc3:['Explain the third confirmed service in depth, including fit, scope, and next step.',3],
+  isvc_names:['Organize confirmed services into distinct individual pages.',3],
+  why_us:['Express genuine, verifiable differences in the business approach without generic superlatives.',3],
+  probsol:['Explain the real customer problem and how the confirmed service addresses it.',3],
+  process:['Turn the established client process into accurate chronological steps.',3],
+  inqprocess:['Explain the real inquiry review and follow-up process.',3],
+  whattoexpect:['Describe the confirmed booking, meeting, or appointment experience step by step.',3],
+  after_submit:['Explain exactly what happens after submission using confirmed channels and timing.',1],
+  trustnote:['Write a brief quote-request reassurance note using confirmed facts; never assume free or no-obligation estimates.',3],
+  inqnote:['Reassure visitors about the confirmed inquiry review process without promising acceptance.',3],
+  booktrust:['Reassure visitors about the real consultation or booking experience.',3],
+  homecta:['Write a natural invitation to take the website’s primary action.',5],
+  aboutcta:['Connect the About-page story to the visitor’s next step.',5],
+  svccta:['Invite visitors to take the next step after reviewing services.',5],
+  idx_cta:['Invite visitors to take the next step after comparing services.',5],
+  portcta:['Invite visitors to inquire after reviewing actual portfolio work.',5],
+  invcta:['Invite visitors to act after reviewing confirmed investment details.',5],
+  story:['Shape the owner’s real story into clear website copy. Ask about missing history rather than inventing it.',3],
+  brandstory:['Tell the actual business origin and product philosophy without fictional milestones.',3],
+  approach:['Explain the real approach and philosophy with concrete examples.',3],
+  workingwme:['Explain the confirmed collaboration process and client expectations.',3],
+  whoiworkwith:['Describe ideal clients based on real needs and service fit.',3],
+  faq:['Answer actual customer questions using confirmed business details. Flag unanswered questions.',1],
+  svcfaq:['Answer actual service, preparation, booking, and policy questions.',1],
+  idx_faq:['Answer questions that help customers choose among confirmed services.',1],
+  invfaq:['Answer investment questions using only confirmed pricing and terms.',1],
+  policies:['Clarify existing approved policies without creating new terms.',1],
+  idx_policies:['Summarize confirmed policies accurately and briefly.',1],
+  quote_factors:['Explain the real factors that affect a quote and the information customers must provide.',1],
+  before_book:['Explain fit, preparation, fees if any, and the confirmed next steps for a consultation.',1],
+  before_appointment:['Help first-time clients select and prepare for the right appointment.',1],
+  project_fit:['Explain accepted project types and confirmed budget or timing boundaries.',1],
+  invvalue:['Explain actual deliverables and the value of the service without inventing results.',3],
+  invpricing:['Organize already-confirmed packages and prices clearly; never invent numbers.',1],
+  port_prev:['Introduce real portfolio examples without fabricating projects.',3],
+  about_prev:['Introduce the owner using verified background and values.',3],
+  topics:['Describe actual speaking topics and intended audiences.',3],
+  funfacts:['Polish only the personal facts the owner supplies.',3],
+  packaging:['Describe confirmed packaging materials and presentation.',1],
+  email_mktg:['Write accurate email opt-in copy based on the intended content and frequency.',3],
+  abandoned_cart:['Write a reminder only after confirming timing, permission, and workflow.',3],
+};
+function sectionAIPlan(sec){
+  if(NO_AI_SECTIONS.has(sec.id))return null;
+  const guide=AI_SECTION_GUIDES[sec.id];
+  if(!guide)return null; // Never fall back to generic marketing instructions.
+  if(!sec.fields.some(f=>f.type!=='upnote'))return null;
+  return {task:guide[0],count:guide[1]};
+}
 function buildSectionPrompt(sec,profile,data,bpKey,tier,details={}){
-  const meta=BP_META[bpKey]||BP_META.quote;
-  const page=sec.page;
+  const plan=sectionAIPlan(sec);
+  if(!plan)return '';
   const fields=sec.fields.filter(f=>f.type!=='upnote');
   const specs=fields.map(f=>{
     const detail=f.type==='cards'?` For each ${f.lbl||'item'} include: ${f.subs.map(x=>x.label+(x.guidance?' ('+x.guidance+')':'')).join('; ')}. ${f.min||1}–${f.max||5} items.`:
-      f.type==='rep'?` ${f.min||1}–${f.max||8} short items.`:
-      f.type==='checks'||f.type==='sel'?` Suggest suitable choices from: ${(f.options||[]).join(' / ')}.`:'';
+      f.type==='rep'?` ${f.min||1}–${f.max||8} items.`:'';
     return `- ${f.label}${f.guidance?' ('+f.guidance+')':''}.${detail}`;
   }).join('\n');
   const existing=fields.map(f=>{
     const v=data[sec.id]?.[f.id];
     return v && (typeof v==='string'?v.trim():Array.isArray(v)&&v.length)?`${f.label}: ${JSON.stringify(v)}`:null;
   }).filter(Boolean).join('\n');
-  const legacy=sec.prompt?sec.prompt(profile):'';
-  const operational=detailQuestions(bpKey).map(q=>{const v=details[q.id]||{};return v.mode!=='later'&&v.answer?.trim()?`${q.label}: ${v.answer.trim()}`:null;}).filter(Boolean).join('\n');
-  return `Continue in the SAME AI conversation where I shared my Business Learning Prompt. Refer to that business profile, audience, voice, and the ${meta.name} goal (${meta.cta}). Do not ask me to paste the profile again.\n\nWEBSITE PAGE: ${page.name}\nSECTION: ${sec.name}\nPURPOSE: ${sec.why||sec.sub||'Help visitors make a confident decision and take the next step.'}\n\nWHAT I NEED FOR THIS SECTION\n${specs||'Explain what content belongs here and ask for any missing business-specific facts.'}\n\n${operational?'CONFIRMED BUSINESS FACTS (USE THESE; DO NOT GUESS)\n'+operational+'\n\n':''}${legacy?'ADDITIONAL WRITING DIRECTION\n'+legacy+'\n\n':''}${existing?'MY CURRENT NOTES / DRAFT ANSWERS\n'+existing+'\n\n':''}INSTRUCTIONS\nUse the business facts from my initial learning prompt, not generic examples. For headlines, CTAs and short persuasive copy, provide 5 distinct options. For descriptions, service cards, process steps and other longer website copy, provide 3 complete alternatives. Recommend the strongest option and explain why it supports the main visitor action. For factual policies, pricing, forms and operational details, give one accurate structured draft, not invented alternatives. Produce each option with the requested field labels so I can paste my choice into the guide. Match the recommended lengths. Be precise and human, avoid unsupported claims, and do not invent policies, prices, credentials, testimonials, or outcomes. If you need essential missing facts, ask up to three specific questions first. If this section is about forms, policies, or operations, help me specify accurate requirements rather than inventing them. Keep the website's primary action clear.`;
+  const operational=detailQuestions(bpKey).map(q=>{
+    const v=details[q.id]||{};
+    return v.mode!=='later'&&v.answer?.trim()?`${q.label}: ${v.answer.trim()}`:null;
+  }).filter(Boolean).join('\n');
+  const output=plan.count===1
+    ?'Produce ONE accurate, structured draft. Do not manufacture alternative facts or policies.'
+    :`Give ${plan.count} meaningfully different, COMPLETE options. Include every requested field in each option, then recommend the clearest option with a short reason.`;
+  return `Continue in the SAME AI conversation where I shared my Business Learning Prompt. Use my confirmed business profile, customer, and voice. Do not ask me to paste it again.
+
+PAGE: ${sec.page.name}
+SECTION: ${sec.name}
+YOUR SPECIFIC TASK
+${plan.task}
+
+FIELDS I NEED TO COMPLETE (USE THESE EXACT LABELS)
+${specs}
+
+${operational?'CONFIRMED BUSINESS DETAILS\n'+operational+'\n\n':''}${existing?'MY CURRENT NOTES / DRAFT ANSWERS\n'+existing+'\n\n':''}OUTPUT INSTRUCTIONS
+${output}
+Match the requested lengths. Use only my confirmed services, prices, policies, experience, and processes. Never invent reviews, guarantees, credentials, results, response times, or other facts. If an essential fact is missing, ask up to three focused questions BEFORE drafting. Otherwise draft directly. Make the answer easy to paste into these exact fields, not a generic website article.`;
 }
+
 function LearningStep({profile,details,bpKey,tier,bpMeta,onBack,onNext}){
   const [copied,setCopied]=useState(false);
   const prompt=buildLearningPrompt(profile,bpKey,tier,details);
@@ -2192,7 +2281,8 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
   const next=()=>{setDone(p=>new Set([...p,step]));setAi(false);if(step<total-1)setStep(step+1);};
   const back=()=>{setAi(false);if(step>0)setStep(step-1);};
   const jump=i=>{setAi(false);setStep(i);setMobileNav(false);};
-  const promptText=buildSectionPrompt(cur,profile,data,bpKey,tier,details);
+  const aiPlan=sectionAIPlan(cur);
+  const promptText=aiPlan?buildSectionPrompt(cur,profile,data,bpKey,tier,details):'';
   useEffect(()=>{if(!isMobile)setMobileNav(false);},[isMobile]);
 
   const handleSubmit=async()=>{
@@ -2314,8 +2404,8 @@ function Intake({profile,details,driveUrl,bpMeta,pages,bpKey,tier,design,onGoToP
           {cur.why}
         </div>}
         {promptText&&<div style={{marginTop:4}}>
-          <div style={{fontSize:13,marginBottom:9,color:'#7A7069'}}>Optional: copy this prompt into your existing AI conversation, choose your favorite version, then paste the final wording into the fields below. Or write your answers yourself.</div><button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
-            ✦ Help me write this section {ai?'↑':'↓'}
+          <div style={{fontSize:13,marginBottom:9,color:'#7A7069'}}>Optional: get AI help tailored to this section, then review and paste your final wording below. You can always write it yourself.</div><button className="ai-btn" onClick={()=>setAi(!ai)} style={{background:'none',border:'1px solid rgba(20,19,20,0.12)',borderRadius:9999,padding:'6px 12px',fontFamily:"'Google Sans Flex', sans-serif",fontSize:10,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7A7069',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:5,transition:'all 0.15s'}}>
+            ✦ {aiPlan?.count===1?'Help me prepare this section':'Help me write this section'} {ai?'↑':'↓'}
           </button>
           {ai&&<div style={{background:'#141314',borderRadius:20,padding:14,marginTop:9}}>
             <div style={{fontFamily:"'Google Sans Flex', sans-serif",fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:'rgba(255,255,255,0.28)',marginBottom:7}}>Copy into the same AI conversation as your business learning prompt</div>
